@@ -1,0 +1,52 @@
+# Локальные настройки
+.env
+
+# Папка node_modules
+node_modules/
+
+# Файлы, сгенерированные IDE
+.idea/
+.vscode/
+*.log
+*.swp
+*.swo
+
+# Файлы, сгенерированные npm
+npm-debug.log
+yarn-error.log
+
+# Файлы, сгенерированные nodemon
+nodemon.json
+
+# Файлы, сгенерированные тестами
+coverage/
+
+# Файлы, сгенерированные сборщиками
+dist/
+build/
+
+# Файлы, сгенерированные Docker
+Dockerfile
+docker-compose.yml
+*.dockerignore
+
+# Файлы, сгенерированные Git
+.DS_Store
+Thumbs.db
+
+# Файлы, сгенерированные системой
+*.tmp
+*.bak
+*.swp
+
+# Файлы, сгенерированные IDE
+*.iml
+*.ipr
+*.iws
+
+# Файлы, сгенерированные тестами
+*.test.js
+*.spec.js
+
+# Файлы, сгенерированные линтерами
+.eslintcache
