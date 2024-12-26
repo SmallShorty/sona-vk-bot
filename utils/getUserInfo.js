@@ -34,7 +34,9 @@ async function getUserInfo(userIds, fields = [], nameCase = 'nom') {
     }
 }
 
-function mentionUser (userInfo){
+//FIXME: возвращает underfined
+function mentionUser (userIds){
+    userInfo = getUserInfo(userIds);
     return `@id${userInfo.id} (${userInfo.first_name} ${userInfo.last_name})`;
 }
 

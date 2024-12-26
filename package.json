@@ -5,6 +5,7 @@
   },
   "dependencies": {
     "@vk-io/hear": "^1.1.1",
+    "canvas": "^2.11.2",
     "dotenv": "^16.4.7",
     "vk-io": "^4.9.1"
   },

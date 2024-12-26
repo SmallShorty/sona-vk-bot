@@ -15,8 +15,12 @@ vk.updates.on('message_new', async (context, next) => {
 const hearManager = new HearManager();
 
 Object.entries(commands_data).forEach(([commandName, data]) => {
+    if (data.wip) {
+        console.log(`\n[INFO] Команда ${prefix}${commandName} помечена как WIP и не будет зарегистрирована.`);
+        return; // Пропускаем регистрацию этой команды
+    }
+    
     const handler = require(`./commands/${commandName}.js`);
-
     
     // Генерация регулярных выражений для каждого алиаса
     const regexArray = data.aliases.map(alias => new RegExp(`^${prefix}${alias}(?=\\s|$)`, 'i'));

@@ -1,0 +1,26 @@
+[
+    {
+      "user": {
+        "nickname": "john_doe",
+        "avatar": "https://example.com/avatars/john_doe.png"
+      },
+      "content": "Привет, как дела?",
+      "replies": [
+        {
+          "user": {
+            "nickname": "jane_doe",
+            "avatar": "https://example.com/avatars/jane_doe.png"
+          },
+          "content": "Привет, все отлично! А у тебя?"
+        }
+      ]
+    },
+    {
+      "user": {
+        "nickname": "admin",
+        "avatar": "https://example.com/avatars/admin.png"
+      },
+      "content": "Не забывайте следить за новыми обновлениями в чате!"
+    }
+  ]
+  
