@@ -35,9 +35,19 @@ async function getUserInfo(userIds, fields = [], nameCase = 'nom') {
 }
 
 //FIXME: возвращает underfined
-function mentionUser (userIds){
-    userInfo = getUserInfo(userIds);
-    return `@id${userInfo.id} (${userInfo.first_name} ${userInfo.last_name})`;
+async function mentionUser(userIds) {
+    try {
+        const userInfo = await getUserInfo(userIds);
+        if (userInfo && userInfo.length > 0) {
+            const user = userInfo[0];
+            return `@id${user.id} (${user.first_name} ${user.last_name})`;
+        } else {
+            throw new Error('Пользователь не найден');
+        }
+    } catch (error) {
+        console.error('Ошибка при упоминании пользователя:', error);
+        throw error;
+    }
 }
 
 module.exports = {
