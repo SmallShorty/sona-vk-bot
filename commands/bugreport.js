@@ -1,32 +1,38 @@
-const { mentionUser } = require('../utils/getUserInfo');
-const vk = require('../vkClient');
-const crypto = require('crypto');
+const { mentionUser } = require("../utils/getUserInfo");
+const vk = require("../vkClient");
+const crypto = require("crypto");
 
 module.exports = async (context) => {
     const peerId = 2000000003;
 
-    console.log(context);
+    const report = context.text.includes(" ")
+        ? context.text.substring(context.text.indexOf(" ") + 1)
+        : null;
 
-
-    const forwardMessages = context.forwards.map(forward => forward.id);
-
+    const forwardMessages = context.forwards.map((forward) => forward.id);
 
     if (forwardMessages.length === 0) {
-        await context.send('Похоже, перешлите несколько сообщений, где произошла ошибка.');
+        await context.send(
+            "Пожалуйста, перешлите сообщения, где произошла ошибка. Это поможет нам быстрее разобраться."
+        );
         return;
     }
 
-    console.log(mentionUser(context.senderId))
-
     try {
+        const mention = await mentionUser(context.senderId);
+
+        const message = `Пользователь: ${mention}\n${report ? `Сообщение: ${report}` : ""}`;
+
         await vk.api.messages.send({
             peer_id: peerId,
-            message: `@${context.senderId}`,
-            forward_messages: forwardMessages.join(','),
-            random_id: crypto.randomInt(1, 2_000_000_000)
+            message: message,
+            forward_messages: forwardMessages.join(","),
+            random_id: crypto.randomInt(1, 2_000_000_000),
         });
-        console.log('Сообщение успешно отправлено');
     } catch (error) {
-        console.error('Ошибка при отправке сообщения:', error);
+        console.error("Ошибка при отправке сообщения:", error);
+        await context.send(
+            "Произошла ошибка при отправке сообщения. Пожалуйста, попробуйте ещё раз."
+        );
     }
 };
