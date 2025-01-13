@@ -42,7 +42,7 @@ async function mentionUser(userIds) {
             const user = userInfo[0];
             return `@id${user.id} (${user.first_name} ${user.last_name})`;
         } else {
-            throw new Error('Пользователь не найден');
+            throw new Error(`Пользователь ${userIds} не найден`);
         }
     } catch (error) {
         console.error('Ошибка при упоминании пользователя:', error);

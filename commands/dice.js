@@ -1,6 +1,5 @@
 const vk = require('..');
 const { getUserInfo } = require('../utils/getUserInfo');
-require('./utils/capitalize.js');
 
 const getRoll = (range, hasDisadvantage = false) => {
     const roll1 = Math.floor(Math.random() * range) + 1;
