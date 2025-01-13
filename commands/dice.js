@@ -1,3 +1,4 @@
+require('../utils/stringExtensions');
 const vk = require('..');
 const { getUserInfo } = require('../utils/getUserInfo');
 
@@ -20,7 +21,6 @@ module.exports = async (context) => {
         return context.send('Произошла ошибка при обработке вашего запроса. Попробуйте еще раз.');
     }
 
-
     if (args.length >= 2 && !isNaN(parseInt(args[1], 10))) {
         range = parseInt(args[1], 10);
         if (range < 2 || range > 100) {
@@ -29,7 +29,6 @@ module.exports = async (context) => {
 
         actions = context.text.slice(args[0].length + args[1].length + 2).split(',').map(action => action.trim()).filter(Boolean);
     } else {
-
         actions = context.text.slice(args[0].length + 1).split(',').map(action => action.trim()).filter(Boolean);
     }
 
