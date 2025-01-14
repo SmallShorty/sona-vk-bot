@@ -1,4 +1,3 @@
-require('dotenv').config();
 const vk = require('./vkClient');
 const { HearManager } = require('@vk-io/hear');
 const commands_data = require("./commands/commands.json");
