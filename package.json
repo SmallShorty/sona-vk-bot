@@ -1,7 +1,9 @@
 {
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "start:test": "VK_API_TOKEN=$VK_API_TOKEN_TEST node index.js",
+    "dev:test": "VK_API_TOKEN=$VK_API_TOKEN_TEST nodemon index.js"
   },
   "dependencies": {
     "@vk-io/hear": "^1.1.1",
