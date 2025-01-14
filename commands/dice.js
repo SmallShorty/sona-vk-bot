@@ -9,7 +9,7 @@ const getRoll = (range, hasDisadvantage = false) => {
 };
 
 module.exports = async (context) => {
-    const args = context.text.split(' ');
+    const args = context.text.split(/\s+/);
     let range = 20;
     let actions = [];
     let response = '';
@@ -27,9 +27,15 @@ module.exports = async (context) => {
             return context.send('Неверный диапазон значений. Укажите число от 2 до 100.');
         }
 
-        actions = context.text.slice(args[0].length + args[1].length + 2).split(',').map(action => action.trim()).filter(Boolean);
+        actions = context.text.slice(args[0].length + args[1].length + 2)
+            .split(/,|\n/) // Разделяем по запятой или новой строке
+            .map(action => action.trim())
+            .filter(Boolean);
     } else {
-        actions = context.text.slice(args[0].length + 1).split(',').map(action => action.trim()).filter(Boolean);
+        actions = context.text.slice(args[0].length + 1)
+            .split(/,|\n/) // Разделяем по запятой или новой строке
+            .map(action => action.trim())
+            .filter(Boolean);
     }
 
     if (actions.length === 0) {
@@ -41,8 +47,8 @@ module.exports = async (context) => {
     response += `результат броск${actions.length <= 1 ? 'а' : 'ов'}: \n`;
 
     actions.forEach((action) => {
-        const hasDisadvantage = action.includes('с помехой');
-        const cleanedAction = hasDisadvantage ? action.replace('с помехой', '').trim() : action;
+        const hasDisadvantage = action.includes('с помехой') || action.startsWith('!');
+        const cleanedAction = hasDisadvantage ? action.replace('с помехой', '').replace(/^!/, '').trim() : action;
         const { roll1, roll2, result } = getRoll(range, hasDisadvantage);
 
         const emoji = result === range ? '💥' : result === 1 ? '💀' : '🎲';
