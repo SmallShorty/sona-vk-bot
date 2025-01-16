@@ -36,15 +36,6 @@ Object.entries(commands_data).forEach(([commandName, data]) => {
     console.log(`[INFO] Команда ${prefix}${commandName} и её алиасы успешно зарегистрированы.\n`);
 });
 
-hearManager.hear(
-    [
-        new RegExp(`^${prefix}(помощь|help)$`, 'i'),      // /помощь или /help
-        new RegExp(`^${prefix}(команды|commands)$`, 'i'),  // /команды или /commands
-        new RegExp(`^${prefix}(помоги|assist)$`, 'i')      // /помоги или /assist
-    ],
-    help
-);
-
 // Подключение обработчиков к VK
 vk.updates.on('message_new', hearManager.middleware);
 

@@ -2,11 +2,16 @@ require('../utils/stringExtensions');
 const vk = require('..');
 const { getUserInfo } = require('../utils/getUserInfo');
 
-const getRoll = (range, hasDisadvantage = false) => {
+const getRoll = (range, advantage = null) => {
     const roll1 = Math.floor(Math.random() * range) + 1;
-    const roll2 = hasDisadvantage ? Math.floor(Math.random() * range) + 1 : null;
-    return { roll1, roll2, result: hasDisadvantage ? Math.min(roll1, roll2) : roll1 };
+    if (advantage == null ) {
+        return { result : roll1 }
+    }
+    const roll2 = Math.floor(Math.random() * range) + 1;
+    return { roll1, roll2, result: advantage ? Math.max(roll1, roll2) : Math.min(roll1, roll2) };
 };
+
+
 
 module.exports = async (context) => {
     const args = context.text.split(/\s+/);
@@ -47,15 +52,31 @@ module.exports = async (context) => {
     response += `результат броск${actions.length <= 1 ? 'а' : 'ов'}: \n`;
 
     actions.forEach((action) => {
-        const hasDisadvantage = action.includes('с помехой') || action.startsWith('!');
-        const cleanedAction = hasDisadvantage ? action.replace('с помехой', '').replace(/^!/, '').trim() : action;
-        const { roll1, roll2, result } = getRoll(range, hasDisadvantage);
-
+        let roll1, roll2, result;
+        let hasAdvantage = false;
+        let hasDisadvantage = false;
+    
+        if (action.includes('с помехой') || action.startsWith('-')) {
+            hasDisadvantage = true;
+            action = action.replace('с помехой', '').replace(/^-/, '').trim();
+        } else if (action.includes('с преимуществом') || action.startsWith('+')) {
+            hasAdvantage = true;
+            action = action.replace('с преимуществом', '').replace(/^\+/, '').trim();
+        }
+    
+        if (hasDisadvantage || hasAdvantage) {
+            ({ roll1, roll2, result } = getRoll(range, hasAdvantage));
+        } else {
+            result = getRoll(range).result;
+        }
+    
         const emoji = result === range ? '💥' : result === 1 ? '💀' : '🎲';
-
-        response += hasDisadvantage
-            ? `${emoji} ${cleanedAction.capital()}: [${roll1}, ${roll2}] -> ${result}\n`
-            : `${emoji} ${cleanedAction.capital()}: ${result}\n`;
+    
+        if (roll1 !== undefined && roll2 !== undefined) {
+            response += `${emoji} ${action.capital()}: [${roll1}, ${roll2}] -> ${result}\n`;
+        } else {
+            response += `${emoji} ${action.capital()}: ${result}\n`;
+        }
     });
 
     context.send(response);
