@@ -1,7 +1,7 @@
 const { mentionUser } = require('../utils/getUserInfo');
 const vk = require('../vkClient');
 const words_data = require("../data/nounsAndAdjectives.json");
-
+const axios = require('axios');
 
 function getRandomPair(nouns, adjectives) {
     const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
@@ -9,20 +9,32 @@ function getRandomPair(nouns, adjectives) {
     return { noun: randomNoun, adjective: randomAdjective };
 }
 
-function declension(adjective, noun) {
-    const lastChar = noun.slice(-1); 
+async function getAdjectiveGenders(adjective) {
+    try {
+        const response = await axios.get('https://ws3.morpher.ru/russian/genders', {
+            params: {
+                s: adjective,
+                format: 'json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Ошибка при запросе к API (getAdjectiveGenders):', error);
+    }
+}
 
-    if (['а', 'я'].includes(lastChar)) {
-        return adjective
-            .replace(/кий$/, 'кая')
-            .replace(/ый$|ий$/, 'ая');
-    } else if (['о', 'е'].includes(lastChar)) {
-        return adjective
-            .replace(/кий$/, 'кое')
-            .replace(/ый$|ий$/, 'ое');
-    } else {
-        
-        return adjective;
+async function getNounGender(noun) {
+    try {
+        const response = await axios.get('http://htmlweb.ru/api/service/sex', {
+            params: {
+                sex: noun,
+                html: true,
+                nolimit: true
+            }
+        });
+        return response.data
+    } catch (error) {
+        console.error('Ошибка при запросе к API (getNounGender):', error);
     }
 }
 
@@ -36,13 +48,28 @@ module.exports = async (context) => {
 
         if (action.toLowerCase() === 'я') {
             const { noun, adjective } = getRandomPair(words_data.noun, words_data.adjective);
+            const gender = await getNounGender(noun);
+            const adjectiveGenders = await getAdjectiveGenders(adjective);
 
-            const agreedAdjective = declension(adjective, noun);
+            if (!adjectiveGenders || !gender) {
+                throw new Error('Не удалось получить данные для согласования.');
+            }
+
+            let agreedAdjective;
+            switch (gender) {
+                case 'Ж':
+                    agreedAdjective = adjectiveGenders.feminine;
+                    break;
+                case '-':
+                    agreedAdjective = adjectiveGenders.neuter;
+                    break;
+                default:
+                    agreedAdjective = adjective;
+                    break;
+            }
             response = `${agreedAdjective} ${noun}`;
             mention = await mentionUser(context.senderId);
         } else {
-            console.log("Условие 'я' не сработало!");
-            console.log(words_data);
             response = action.charAt(0).toLowerCase() + action.slice(1).replace(/\.$/, '');
             const { items } = await vk.api.messages.getConversationMembers({ peer_id: peerId });
             const users = items.filter(user => user.member_id > 0);
@@ -53,7 +80,6 @@ module.exports = async (context) => {
         await context.send(`🔍 ${mention} — ${response}.`);
 
     } catch (error) {
-        console.error(error);
         await context.send('Произошла ошибка при обработке вашего запроса. Попробуйте еще раз.');
     }
 };
