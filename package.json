@@ -10,6 +10,8 @@
     "axios": "^1.7.9",
     "canvas": "^2.11.2",
     "dotenv": "^16.4.7",
+    "pg": "^8.13.1",
+    "sequelize": "^6.37.5",
     "vk-io": "^4.9.1"
   },
   "devDependencies": {
