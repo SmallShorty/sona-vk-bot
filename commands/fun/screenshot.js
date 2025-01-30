@@ -1,6 +1,6 @@
-const vk = require('../vkClient');
-const { renderDialogue } = require('../utils/renderDialogue');
-const { mentionUser } = require('../utils/getUserInfo');
+const vk = require('../../vkClient');
+const { renderDialogue } = require('../../utils/renderDialogue');
+const { mentionUser } = require('../../utils/getUserInfo');
 
 module.exports = async (context) => {
     if (!context.replyMessage && context.forwards.size === 0) {

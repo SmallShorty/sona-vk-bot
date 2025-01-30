@@ -1,6 +1,6 @@
-require('../utils/stringExtensions');
-const vk = require('..');
-const { getUserInfo } = require('../utils/getUserInfo');
+require('../../utils/stringExtensions');
+const vk = require('../..');
+const { getUserInfo } = require('../../utils/getUserInfo');
 
 const getRoll = (range, advantage = null) => {
     const roll1 = Math.floor(Math.random() * range) + 1;

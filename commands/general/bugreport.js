@@ -1,5 +1,5 @@
-const { mentionUser } = require("../utils/getUserInfo");
-const vk = require("../vkClient");
+const { mentionUser } = require("../../utils/getUserInfo");
+const vk = require("../../vkClient");
 const crypto = require("crypto");
 
 module.exports = async (context) => {

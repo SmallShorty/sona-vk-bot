@@ -1,7 +1,6 @@
 const vk = require('./vkClient');
 const { HearManager } = require('@vk-io/hear');
-const commands_data = require("./commands/commands.json");
-const help = require('./commands/help');
+const commands_data = require("./commands/index.json"); // Путь к файлу JSON
 const { checkDatabaseConnection } = require('./db/db');
 
 const prefix = '/';
@@ -13,25 +12,35 @@ vk.updates.on('message_new', async (context, next) => {
 
 const hearManager = new HearManager();
 
-Object.entries(commands_data).forEach(([commandName, data]) => {
-    if (data.wip) {
-        console.log(`\n[INFO] Команда ${prefix}${commandName} помечена как WIP и не будет зарегистрирована.`);
-        return;
-    }
-    
-    const handler = require(`./commands/${commandName}.js`);
-    
-    const regexArray = data.aliases.map(alias => new RegExp(`^${prefix}${alias}(?=\\s|$)`, 'i'));
+// Проходим по категориям и командам
+Object.entries(commands_data).forEach(([category, data]) => {
+    const { name: categoryName, commands } = data;
 
-    console.log(`\n[INFO] Регистрируем команду: ${prefix}${commandName}`);
-    console.log(`[INFO] Алиасы: ${data.aliases.join(', ')}`);
+    commands.forEach((commandData) => {
+        const { name: commandName, wip, aliases } = commandData;
 
-    regexArray.forEach((regex, index) => {
-        console.log(`  - [INFO] Зарегистрирован алиас: ${prefix}${data.aliases[index]}`);
-        hearManager.hear(regex, handler);
+        if (wip) {
+            console.log(`\n[INFO] Команда ${prefix}${commandName} из категории ${categoryName} помечена как WIP и не будет зарегистрирована.`);
+            return;
+        }
+
+        // Подключаем обработчик команды из соответствующей папки и категории
+        const handler = require(`./commands/${category}/${commandName}.js`);
+
+        // Создаем регулярные выражения для алиасов
+        const regexArray = aliases.map(alias => new RegExp(`^${prefix}${alias}(?=\\s|$)`, 'i'));
+
+        console.log(`\n[INFO] Регистрируем команду: ${prefix}${commandName} из категории ${categoryName}`);
+        console.log(`[INFO] Алиасы: ${aliases.join(', ')}`);
+
+        // Регистрируем каждый алиас
+        regexArray.forEach((regex, index) => {
+            console.log(`  - [INFO] Зарегистрирован алиас: ${prefix}${aliases[index]}`);
+            hearManager.hear(regex, handler);
+        });
+
+        console.log(`[INFO] Команда ${prefix}${commandName} из категории ${categoryName} и её алиасы успешно зарегистрированы.\n`);
     });
-
-    console.log(`[INFO] Команда ${prefix}${commandName} и её алиасы успешно зарегистрированы.\n`);
 });
 
 vk.updates.on('message_new', hearManager.middleware);
