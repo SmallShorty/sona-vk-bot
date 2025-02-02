@@ -5,6 +5,8 @@ const token = process.env.NODE_ENV === 'test' ? process.env.VK_API_TOKEN_TEST : 
 
 const vk = new VK({
     token: token,
+    polling: true
+
 });
 
 module.exports = vk;

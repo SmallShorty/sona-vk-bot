@@ -3,8 +3,16 @@ const { Sequelize } = require('sequelize');
 const sequelize = new Sequelize(process.env.POSTGRES_DB, process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, {
   host: 'localhost',
   dialect: 'postgres',
-  logging: false, // Отключить логирование SQL запросов
+  logging: false,
 });
+
+sequelize.sync()
+    .then(() => {
+        console.log('Database synced');
+    })
+    .catch((error) => {
+        console.error('Error syncing database:', error);
+    });
 
 const checkDatabaseConnection = async () => {
   try {

@@ -1,4 +1,6 @@
-const responses = [
+const responses = require('../../data/responses.json');
+
+const answer = [
     "Бесспорно",
     "Предрешено",
     "Без сомнений",
@@ -22,11 +24,16 @@ const responses = [
 ];
 
 module.exports = async (context) => {
-    context.send( `🎱 Магический шар говорит: ${responses[Math.floor(Math.random() * responses.length)]}`, {
-        forward: JSON.stringify({
-            peer_id: context.peerId,
-            conversation_message_ids: [context.conversationMessageId],
-            is_reply: 1,
-        })
-    });
+    try {
+        context.send( `🎱 Магический шар говорит: ${answer[Math.floor(Math.random() * answer.length)]}`, {
+            forward: JSON.stringify({
+                peer_id: context.peerId,
+                conversation_message_ids: [context.conversationMessageId],
+                is_reply: 1,
+            })
+        });
+    } catch (err) {
+        console.log(`[ERR] ${err}`)
+        await context.send(responses.errors.default)
+    }
 };

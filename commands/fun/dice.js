@@ -33,12 +33,12 @@ module.exports = async (context) => {
         }
 
         actions = context.text.slice(args[0].length + args[1].length + 2)
-            .split(/,|\n/) // Разделяем по запятой или новой строке
+            .split(/,|\n/) 
             .map(action => action.trim())
             .filter(Boolean);
     } else {
         actions = context.text.slice(args[0].length + 1)
-            .split(/,|\n/) // Разделяем по запятой или новой строке
+            .split(/,|\n/) 
             .map(action => action.trim())
             .filter(Boolean);
     }

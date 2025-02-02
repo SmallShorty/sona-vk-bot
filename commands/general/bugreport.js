@@ -1,6 +1,7 @@
 const { mentionUser } = require("../../utils/getUserInfo");
 const vk = require("../../vkClient");
 const crypto = require("crypto");
+const responses = require('../../data/responses.json');
 
 module.exports = async (context) => {
     const peerId = 2000000003;
@@ -30,9 +31,6 @@ module.exports = async (context) => {
             random_id: crypto.randomInt(1, 2_000_000_000),
         });
     } catch (error) {
-        console.error("Ошибка при отправке сообщения:", error);
-        await context.send(
-            "Произошла ошибка при отправке сообщения. Пожалуйста, попробуйте ещё раз."
-        );
+        await context.send(references.errors.default);
     }
 };
