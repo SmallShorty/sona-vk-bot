@@ -1,21 +1,31 @@
 const Fandom = require('../../db/models/fandom');
 const responses = require('../../data/responses.json');
+const validateEnvironment = require('../../utils/validateEnvironment')
 
 module.exports = async (context) => {
   const args = context.text.split(/\s+/).slice(1);
   const chat_id = context.peerId;
   let response = '';
 
+  const invalidEnv = await validateEnvironment(context, { requireChat: true });
+  if (invalidEnv) {
+    response = invalidEnv;
+    return await context.send(response);
+  }
+
   if (args.length === 0) {
     const fandoms = await Fandom.getFandomList(chat_id);
     if (fandoms.length > 0) {
-      response = `📝 Список фандомов в конференции:\n` + fandoms.map(f => f.name).join('\n');
+      response = `📝 Список фандомов в конференции:\n` + fandoms
+        .map(f => f.name)
+        .sort()
+        .join('\n');
     } else {
       response = `${responses.errors.not_found} Чтобы добавить фандом, используйте команду [/фандом добавить]`;
     }
   } else {
     if (args.length < 2 && args[0].toLowerCase() !== 'удалить') {
-      response = responses.errors.missing_arguments;
+      response = responses.errors.invalid_input;
       return await context.send(response);
     }
 
@@ -37,7 +47,7 @@ module.exports = async (context) => {
 
       case 'изменить':
         if (!fandomName.includes(' , ')) {
-          response = responses.errors.missing_arguments + ' Разделите название старого и нового фандома через запятую с двумя пробелами [ , ].';
+          response = responses.errors.invalid_input + ' Разделите название старого и нового фандома через запятую с двумя пробелами [ , ].';
           break;
         }
         const [oldName, newName] = fandomName.split(' , ').map(name => name.trim());

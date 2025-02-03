@@ -2,12 +2,6 @@ const { DataTypes, Model } = require('sequelize');
 const { sequelize } = require('../db');
 
 class Chat extends Model {
-    static async createPinnedMessage(chatId, pinnedMessageContext) {
-        return await this.create({
-            id: chatId,
-            pinned_message_context: pinnedMessageContext,
-        });
-    }
 
     static async getPinnedMessage(chatId) {
         const chat = await this.findByPk(chatId);
