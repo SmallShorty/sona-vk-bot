@@ -1,38 +1,56 @@
 const { Model, DataTypes } = require('sequelize');
-const { sequelize } = require('../db'); // Импортируем sequelize
+const { sequelize } = require('../db');
 
 class Character extends Model {
+  // ==== CREATE ====
+
   /**
    * Создает нового персонажа.
    * @param {Object} characterData - Данные для создания персонажа.
    * @returns {Promise<Character>} Созданный персонаж.
    */
-  static async createCharacter(characterData) {
-    return await Character.create(characterData);
+  static createCharacter(characterData) {
+    // Здесь можно сразу вернуть промис без await
+    return Character.create(characterData);
   }
+
+  // ==== READ ====
 
   /**
    * Получает всех персонажей в чате.
    * @param {number} chatId - Идентификатор чата.
    * @returns {Promise<Array<Character>>} Список персонажей в чате.
    */
-  static async getAllCharactersInChat(chatId) {
-    return await Character.findAll({
-      where: { chat_id: chatId }
-    });
+  static getAllCharactersInChat(chatId) {
+    return Character.findAll({ where: { chat_id: chatId } });
   }
 
   /**
-   * Получает список персонажей в чате, принадлежащих определенному фандому.
+   * Получает список персонажей в чате для определённого фандома.
    * @param {number} chatId - Идентификатор чата.
    * @param {number} fandomId - Идентификатор фандома.
    * @returns {Promise<Array<Character>>} Список персонажей для конкретного фандома.
    */
-  static async getCharactersByFandom(chatId, fandomId) {
-    return await Character.findAll({
+  static getCharactersByFandom(chatId, fandomId) {
+    return Character.findAll({
       where: {
         chat_id: chatId,
         fandom_id: fandomId
+      }
+    });
+  }
+
+  /**
+   * Получает всех персонажей пользователя в чате.
+   * @param {number} chatId - Идентификатор чата.
+   * @param {number} userId - Идентификатор пользователя.
+   * @returns {Promise<Array<Character>>} Список персонажей пользователя в чате.
+   */
+  static getCharactersByUser(chatId, userId) {
+    return Character.findAll({
+      where: {
+        chat_id: chatId,
+        user_id: userId
       }
     });
   }
@@ -43,15 +61,17 @@ class Character extends Model {
    * @param {number} userId - Идентификатор пользователя.
    * @returns {Promise<Character|null>} Главный персонаж пользователя или null.
    */
-  static async getMainCharacterByUser(chatId, userId) {
-    return await Character.findOne({
+  static getMainCharacterByUser(chatId, userId) {
+    return Character.findOne({
       where: {
         chat_id: chatId,
-        is_main: true,
-        user_id: userId
+        user_id: userId,
+        is_main: true
       }
     });
   }
+
+  // ==== UPDATE ====
 
   /**
    * Изменяет значок, фандом или имя персонажа.
@@ -60,15 +80,38 @@ class Character extends Model {
    * @returns {Promise<Character>} Обновленный персонаж.
    */
   static async updateCharacter(characterId, updateData) {
-    const character = await Character.findByPk(characterId);
-    if (!character) {
+    // Используем update с возвращением обновленной записи
+    const [count, [updatedCharacter]] = await Character.update(updateData, {
+      where: { id: characterId },
+      returning: true
+    });
+    if (count === 0) {
       const error = new Error('Персонаж не найден');
       error.name = 'NotFoundError';
       throw error;
     }
-    await character.update(updateData);
-    return character;
+    return updatedCharacter;
   }
+
+  /**
+   * Удаляет значок и фандом персонажа.
+   * @param {number} characterId - Идентификатор персонажа.
+   * @returns {Promise<Character>} Обновленный персонаж с удаленными значком и фандомом.
+   */
+  static async removeIconAndFandom(characterId) {
+    const [count, [updatedCharacter]] = await Character.update(
+      { icon: null, fandom_id: null },
+      { where: { id: characterId }, returning: true }
+    );
+    if (count === 0) {
+      const error = new Error('Персонаж не найден');
+      error.name = 'NotFoundError';
+      throw error;
+    }
+    return updatedCharacter;
+  }
+
+  // ==== DELETE ====
 
   /**
    * Удаляет персонажа.
@@ -76,32 +119,13 @@ class Character extends Model {
    * @returns {Promise<boolean>} Возвращает true, если персонаж был удален.
    */
   static async deleteCharacter(characterId) {
-    const character = await Character.findByPk(characterId);
-    if (!character) {
+    const count = await Character.destroy({ where: { id: characterId } });
+    if (!count) {
       const error = new Error('Персонаж не найден');
       error.name = 'NotFoundError';
       throw error;
     }
-    await character.destroy();
     return true;
-  }
-
-  /**
-   * Удаляет значок или фандом персонажа.
-   * @param {number} characterId - Идентификатор персонажа.
-   * @returns {Promise<Character>} Обновленный персонаж с удаленными значком и фандомом.
-   */
-  static async removeIconAndFandom(characterId) {
-    const character = await Character.findByPk(characterId);
-    if (!character) {
-      const error = new Error('Персонаж не найден');
-      error.name = 'NotFoundError';
-      throw error;
-    }
-    character.icon = null;
-    character.fandom_id = null;
-    await character.save();
-    return character;
   }
 }
 

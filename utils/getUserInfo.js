@@ -38,6 +38,7 @@ async function getUserInfo(userIds, fields = [], nameCase = 'nom') {
 async function mentionUser(userIds) {
     try {
         const userInfo = await getUserInfo(userIds);
+        console.log(userInfo)
         if (userInfo && userInfo.length > 0) {
             const user = userInfo[0];
             return `@id${user.id} (${user.first_name} ${user.last_name})`;

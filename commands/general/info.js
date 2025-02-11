@@ -25,7 +25,7 @@ module.exports = async (context) => {
             case 'добавить':
             case 'изменить':
                 const newPinnedMessage = await context.question(
-                    responses.requests.default + 'текст для закреплённого сообщения',
+                    responses.requests.enter + 'текст для закреплённого сообщения',
                     { targetUserId }
                 );
                 try {
