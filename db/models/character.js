@@ -80,17 +80,17 @@ class Character extends Model {
    * @returns {Promise<Character>} Обновленный персонаж.
    */
   static async updateCharacter(characterId, updateData) {
-    // Используем update с возвращением обновленной записи
-    const [count, [updatedCharacter]] = await Character.update(updateData, {
-      where: { id: characterId },
-      returning: true
-    });
-    if (count === 0) {
+    // Находим персонажа по ID
+    const character = await Character.findOne({ where: { id: characterId } });
+    if (!character) {
       const error = new Error('Персонаж не найден');
       error.name = 'NotFoundError';
       throw error;
     }
-    return updatedCharacter;
+  
+    // Обновляем данные персонажа
+    await character.update(updateData);
+    return character;
   }
 
   /**

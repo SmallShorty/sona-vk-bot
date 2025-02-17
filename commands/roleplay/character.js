@@ -13,8 +13,9 @@ module.exports = async (context) => {
 
     const args = {
         all: context.text.startsWith('/персонажи'),
-        command: (context.text.split(' ')[1] && !context.text.split(' ')[1].includes('id')) ? context.text.split(' ')[1].toLowerCase() : null,
-        id: (context.text.includes('id') ? parseInt(context.text.slice(context.text.indexOf('id') + 2).replace(/\D.*$/, ''), 10) : null)
+        command: context.text.split(' ')[1]?.toLowerCase() || null,
+        payload: context.text.split(' ').slice(2).join(' ') || null,
+        id: (context.text.match(/id\s*(\d+)/i)?.[1] || null)
     };
 
     if (!await validateEnvironment(context, { requireChat: true })) return;
@@ -37,9 +38,11 @@ module.exports = async (context) => {
                 await addCharacter(context, args);
                 return await context.send(responses.success.added);
             case 'изменить':
-                console.log(args);
+                console.log('изменить')
                 await editCharacter(context, args);
+                break;
             case 'удалить':
+                console.log('удалить')
                 await deleteCharacter(context, args);
                 return context.send(responses.success.deleted);
         }
