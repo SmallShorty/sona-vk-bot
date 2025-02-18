@@ -36,6 +36,8 @@ module.exports = async (context) => {
         .filter(group => group !== null)
         .sort((a, b) => a.category.localeCompare(b.category));
 
+    console.log('Categorized Commands:', categorizedCommands);
+
     if (context.text.split(' ').length < 2) {
         let categoriesList = '📂 Доступные категории команд:\n';
         categorizedCommands.forEach(group => {
@@ -49,8 +51,8 @@ module.exports = async (context) => {
     const categoryName = args[1];
 
     const category = categorizedCommands.find(group => 
-        group.name.toLowerCase() === categoryName.toLowerCase() || 
-        group.category.toLowerCase() === categoryName.toLowerCase()
+        group.name.toLowerCase().includes(categoryName.toLowerCase()) || 
+        group.category.toLowerCase().includes(categoryName.toLowerCase())
     );
 
     if (category) {
