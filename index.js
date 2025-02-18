@@ -3,6 +3,8 @@ const commands_data = require("./commands/index.json");
 const { checkDatabaseConnection } = require('./db/db');
 const responses = require("./data/responses.json");
 const { hearManager, sessionManager, sceneManager, questionManager } = require('./managers');
+const path = require('path');
+const fs = require('fs');
 const Chat = require('./db/models/chat');
 
 const prefix = '/';
@@ -17,22 +19,17 @@ vk.updates.use(questionManager.middleware);
 vk.updates.on('message_new', sessionManager.middleware);
 vk.updates.on('message_new', sceneManager.middleware);
 vk.updates.on(['message_new'], hearManager.middleware);
-vk.updates.on('message_new', sceneManager.middlewareIntercept); // Default scene entry handler
+vk.updates.on('message_new', sceneManager.middlewareIntercept);
 
-// Пример обработчика для приглашения в чат
-vk.updates.on('chat_invite_user', async (context) => {
-    try {
-        await context.send(responses.greetings);
-        if (context.peerId != context.senderId) {
-            await Chat.create({ id: context.peerId });
-        }
-        console.log(`[LOG] Новая беседа добавлена: ${context.peerId}`);
-    } catch (error) {
-        console.log(`[ERROR] Произошла ошибка при добавлении беседы ${context.peerId}\n${error}`);
+const eventsPath = path.join(__dirname, 'events');
+fs.readdirSync(eventsPath).forEach((file) => {
+    if (file.endsWith('.js')) {
+        const eventHandler = require(path.join(eventsPath, file));
+        eventHandler(vk);
+        console.log(`[INFO] Обработчик ${file} загружен.`);
     }
 });
 
-// Регистрация команд через hearManager и commands_data (код остается без изменений)
 Object.entries(commands_data).forEach(([category, data]) => {
     const { name: categoryName, commands } = data;
 

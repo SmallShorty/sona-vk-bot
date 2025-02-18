@@ -34,7 +34,6 @@ async function getUserInfo(userIds, fields = [], nameCase = 'nom') {
     }
 }
 
-//FIXME: возвращает underfined
 async function mentionUser(userIds) {
     try {
         const userInfo = await getUserInfo(userIds);
