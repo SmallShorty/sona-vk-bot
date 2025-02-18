@@ -4,9 +4,12 @@ const { sequelize } = require('../db');
 class Chat extends Model {
 
     static async getPinnedMessage(chatId) {
+        console.log('Ищем чат с ID:', chatId);
         const chat = await this.findByPk(chatId);
+        console.log('Найденный чат:', chat);
         return chat ? chat.pinned_message_context : null;
     }
+
 
     static async updatePinnedMessage(chatId, pinnedMessageContext) {
         const chat = await this.findByPk(chatId);

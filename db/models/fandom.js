@@ -19,28 +19,34 @@ class Fandom extends Model {
    * @throws {Error} Если фандом уже существует, выбрасывается ошибка с именем "AlreadyExistsError".
    */
   static async createFandom(chatId, name) {
-    // Приводим имя к нижнему регистру для унификации
     const normalizedName = name.toLowerCase();
-
-    // Проверяем наличие фандома с таким именем в данном чате
+  
+    // Проверяем, существует ли чат
+    const chat = await Chat.findByPk(chatId);
+    if (!chat) {
+      throw new Error(`Чат с ID ${chatId} не найден.`);
+    }
+  
+    // Проверяем, существует ли фандом с таким именем
     const existing = await Fandom.findOne({
       where: {
         chat_id: chatId,
         name: normalizedName,
       }
     });
-
+  
     if (existing) {
       const error = new Error('Фандом уже существует');
       error.name = 'AlreadyExistsError';
       throw error;
     }
-
+  
     return await Fandom.create({
       chat_id: chatId,
       name: normalizedName,
     });
   }
+  
   /**
  * Обновляет имя фандома в заданном чате.
  * @param {number} chatId - Идентификатор чата.

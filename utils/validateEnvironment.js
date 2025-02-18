@@ -5,21 +5,17 @@ const validateEnvironment = async (context, { requireChat = false, requireAdmin 
     if (requireAdmin) requireChat = true;
     if (requireBotAdmin) requireChat = true;
 
-    // Проверка, что команда вызвана в беседе
     if (requireChat && !context.isChat) {
         await context.send(responses.errors.chat_only);
         return false;
     }
 
-    // Проверка прав администратора и доступа бота
     if (requireAdmin || requireBotAdmin) {
         try {
-            // Получаем список участников беседы
             const response = await vk.api.messages.getConversationMembers({
                 peer_id: context.peerId
             });
 
-            // Проверка прав бота
             if (requireBotAdmin) {
                 const botId = context.peerId - 2000000000; // ID бота в беседе
                 const botMember = response.items.find(item => item.member_id === botId);
@@ -29,7 +25,6 @@ const validateEnvironment = async (context, { requireChat = false, requireAdmin 
                 }
             }
 
-            // Проверка прав пользователя
             if (requireAdmin) {
                 const userMember = response.items.find(item => item.member_id === context.senderId);
                 if (!userMember || !(userMember.is_admin || userMember.is_owner)) {
@@ -40,9 +35,8 @@ const validateEnvironment = async (context, { requireChat = false, requireAdmin 
         } catch (error) {
             console.error('[ERR] Ошибка при получении участников беседы:', error);
 
-            // Обработка ошибки "У бота нет доступа"
             if (error.code === 917) {
-                await context.send('У бота нет прав администратора в этой беседе. Пожалуйста, назначьте бота администратором.');
+                await context.send(responses.errors.no_admin_rights);
                 return false;
             }
 

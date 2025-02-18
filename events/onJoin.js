@@ -11,7 +11,7 @@ module.exports = (vk) => {
             console.log(`[LOG] Новая беседа добавлена: ${context.peerId}`);
         } catch (error) {
             console.log(`[ERROR] Произошла ошибка при добавлении беседы ${context.peerId}\n${error}`);
-            context.send(responses.errors.db + 'К сожалению, невозможно добавить беседу в базу данных. Пожалуйста, повторите позже.');
+            context.send(responses.errors.db);
         }
     });
 };

@@ -1,56 +1,57 @@
 const Chat = require('../../db/models/chat');
-const validateEnvironment = require('../../utils/validateEnvironment');
-const responses = require('../../data/responses.json');
+const validateEnvironment = require('../../utils/validateEnvironment')
+const responses = require('../../data/responses.json')
 
 module.exports = async (context) => {
+    let response;
     const args = context.text.split(' ');
-    const command = args[1]?.toLowerCase() || null;
+    const command = args[1] ? args[1].toLowerCase() : null;
+
     const chatId = context.peerId;
     const targetUserId = context.senderId;
 
     if (!(await validateEnvironment(context, { requireAdmin: true }))) return;
+    if (!invalidEnv) { response = invalidEnv } else {
+        switch (command) {
+            case null:
+                try {
+                    response = await Chat.getPinnedMessage(chatId) || responses.errors.not_found;
+                    console.log(response);
+                } catch (err) {
+                    console.log(`ERR] ${err}`)
+                    response = responses.errors.db;
+                }
+                break;
+            case 'добавить':
+            case 'изменить':
+                const newPinnedMessage = await context.question(
+                    responses.requests.enter + 'текст для закреплённого сообщения',
+                    { targetUserId }
+                );
+                try {
+                    await Chat.updatePinnedMessage(chatId, newPinnedMessage.text);
+                    response = responses.success.updated;
+                } catch (err) {
+                    console.log(`ERR] ${err}`);
+                    response = responses.errors.db;
+                }
 
-    // Функция обработки ошибок
-    const handleError = (err) => {
-        console.error(`[ERROR] ${err}`);
-        return responses.errors.db;
-    };
-
-    // Функция обновления закрепленного сообщения
-    const updatePinnedMessage = async () => {
-        const newMessage = await context.question(
-            responses.requests.enter + 'текст для закреплённого сообщения',
-            { targetUserId }
-        );
-        try {
-            await Chat.updatePinnedMessage(chatId, newMessage.text);
-            return responses.success.updated;
-        } catch (err) {
-            return handleError(err);
+                break;
+            case 'удалить':
+                try {
+                    await Chat.deletePinnedMessage(chatId)
+                    response = responses.success.deleted;
+                } catch (err) {
+                    console.log(`ERR] ${err}`)
+                    response = responses.errors.db;
+                }
+                break
         }
     };
-
-    const commands = {
-        null: async () => {
-            try {
-                const message = await Chat.getPinnedMessage(chatId);
-                return message?.trim() ? message : responses.errors.not_found;
-            } catch (err) {
-                return handleError(err);
-            }
-        },
-        'добавить': updatePinnedMessage,
-        'изменить': updatePinnedMessage,
-        'удалить': async () => {
-            try {
-                await Chat.deletePinnedMessage(chatId);
-                return responses.success.deleted;
-            } catch (err) {
-                return handleError(err);
-            }
-        }
-    };
-
-    const response = commands.hasOwnProperty(command) ? await commands[command]() : responses.errors.unknown_command;
-    return await context.send(response);
+    try {
+        await context.send(response);
+    } catch (err) {
+        console.error(`[ERROR] Ошибка при отправке сообщения\n${err}`);
+        await context.send(responses.errors.default);
+    }
 };

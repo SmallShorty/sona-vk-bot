@@ -15,18 +15,18 @@ module.exports = async function addCharacter(context, args) {
   const fields = [
     {
       name: 'nickname',
-      questionText: 'Введите имя персонажа:',
+      questionText: responses.requests.enter + 'имя персонажа.',
       validation: (input) => input.text.trim().length > 0
     },
     {
       name: 'icon',
-      questionText: 'Введите эмодзи для персонажа:',
+      questionText: responses.requests.enter + 'значок для персонажа. ' + responses.requests.skip,
       skippable: true,
       validation: (input) => isEmoji(input)
     },
     {
       name: 'fandom',
-      questionText: 'Выберите фандом:',
+      questionText: responses.requests.сhoose + 'фандом для персонажа. ' + responses.requests.skip,
       skippable: true,
       keyboard: generateKeyboard(fandomButtons, context.senderId, true)
     }
@@ -35,7 +35,7 @@ module.exports = async function addCharacter(context, args) {
   try {
     const characterData = await askFields(context, fields);
     if (!characterData) {
-      return await context.send('прерван');
+      return await context.send(responses.errors.default);
     }
 
 
