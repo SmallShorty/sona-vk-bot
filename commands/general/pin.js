@@ -1,33 +1,35 @@
 const vk = require("../../vkClient");
-const Chat = require('../../db/models/chat');
-const validateEnvironment = require('../../utils/validateEnvironment')
-const responses = require('../../data/responses.json')
+const Chat = require("../../db/models/chat");
+const Character = require("../../db/models/character");
+const responses = require("../../data/responses.json");
+const generateCharacterList = require("../../utils/generateCharacterList");
 
 module.exports = async (context) => {
-    let response;
     try {
-        const pinned = {
-            id: Math.floor(Math.random() * 1000000),
-            text: await Chat.getPinnedMessage(chatId) || responses.errors.not_found
+        let pinnedMessage = await Chat.getPinnedMessage(context.peerId) || responses.errors.not_found;
+        const messageId = Math.floor(Math.random() * 1000000);
+        const characters = await Character.getAllCharactersInChat(context.peerId);
+
+        if (characters.length !== 0) {
+            pinnedMessage += '\n\n' + await generateCharacterList(characters);
         }
-        const response = await vk.api.messages.send({
+
+        await vk.api.messages.send({
             peer_id: context.peerId,
-            message: pinned.text,
-            random_id: pinned.id
+            message: pinnedMessage,
+            random_id: messageId
         });
 
         try {
             await vk.api.messages.pin({
                 peer_id: context.peerId,
-                conversation_message_id: pinned.id
-              });
+                conversation_message_id: messageId
+            });
         } catch (error) {
-            console.log(`[ERR] ${err}`);
-            response = responses.errors.db;
+            console.error(`[ERR] Не удалось закрепить сообщение: ${error}`);
         }
-
-      } catch (error) {
-        console.log(`[ERR] ${err}`);
-        response = responses.errors.db;
-      }
-}
+    } catch (error) {
+        console.error(`[ERR] Sending message failed: ${error}`);
+        await context.send(responses.errors.default);
+    }
+};
