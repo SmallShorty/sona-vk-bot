@@ -1,46 +1,61 @@
 const vk = require('./vkClient');
-const { HearManager } = require('@vk-io/hear');
-const commands_data = require("./commands/commands.json");
-const help = require('./commands/help');
+const commands_data = require("./commands/index.json");
+const { checkDatabaseConnection } = require('./db/db');
+const responses = require("./data/responses.json");
+const { hearManager, sessionManager, sceneManager, questionManager } = require('./managers');
+const path = require('path');
+const fs = require('fs');
+const Chat = require('./db/models/chat');
 
 const prefix = '/';
 
-// Middleware для логирования входящих сообщений
-vk.updates.on('message_new', async (context, next) => {
-    console.log(`[LOG] Получено сообщение: "${context.text}" от пользователя ${context.senderId}`);
-    await next();
-});
+// // Логирование входящих сообщений
+// vk.updates.on('message_new', async (context, next) => {
+//     console.log(`[LOG] Получено сообщение: "${context.text}" от пользователя ${context.senderId}`);
+//     await next();
+// });
 
-const hearManager = new HearManager();
+vk.updates.use(questionManager.middleware);
+vk.updates.on('message_new', sessionManager.middleware);
+vk.updates.on('message_new', sceneManager.middleware);
+vk.updates.on(['message_new'], hearManager.middleware);
+vk.updates.on('message_new', sceneManager.middlewareIntercept);
 
-Object.entries(commands_data).forEach(([commandName, data]) => {
-    if (data.wip) {
-        console.log(`\n[INFO] Команда ${prefix}${commandName} помечена как WIP и не будет зарегистрирована.`);
-        return; // Пропускаем регистрацию этой команды
+const eventsPath = path.join(__dirname, 'events');
+fs.readdirSync(eventsPath).forEach((file) => {
+    if (file.endsWith('.js')) {
+        const eventHandler = require(path.join(eventsPath, file));
+        eventHandler(vk);
+        console.log(`[INFO] Обработчик ${file} загружен.`);
     }
-    
-    const handler = require(`./commands/${commandName}.js`);
-    
-    // Генерация регулярных выражений для каждого алиаса
-    const regexArray = data.aliases.map(alias => new RegExp(`^${prefix}${alias}(?=\\s|$)`, 'i'));
-
-    console.log(`\n[INFO] Регистрируем команду: ${prefix}${commandName}`);
-    console.log(`[INFO] Алиасы: ${data.aliases.join(', ')}`);
-
-    // Регистрируем регулярные выражения для каждого алиаса
-    regexArray.forEach((regex, index) => {
-        console.log(`  - [INFO] Зарегистрирован алиас: ${prefix}${data.aliases[index]}`);
-        hearManager.hear(regex, handler);
-    });
-
-    console.log(`[INFO] Команда ${prefix}${commandName} и её алиасы успешно зарегистрированы.\n`);
 });
 
-// Подключение обработчиков к VK
-vk.updates.on('message_new', hearManager.middleware);
+Object.entries(commands_data).forEach(([category, data]) => {
+    const { name: categoryName, commands } = data;
 
-// Запуск бота
-vk.updates.start().catch(console.error);
+    commands.forEach((commandData) => {
+        const { name: commandName, wip, aliases } = commandData;
+        if (wip) {
+            console.log(`\n[INFO] Команда ${prefix}${commandName} из категории ${categoryName} помечена как WIP и не будет зарегистрирована.`);
+            return;
+        }
+        const handler = require(`./commands/${category}/${commandName}.js`);
+        const regexArray = aliases.map(alias => new RegExp(`^${prefix}${alias}(?=\\s|$)`, 'i'));
+        console.log(`\n[INFO] Регистрируем команду: ${prefix}${commandName} из категории ${categoryName}`);
+        console.log(`[INFO] Алиасы: ${aliases.join(', ')}`);
+        regexArray.forEach((regex, index) => {
+            console.log(`  - [INFO] Зарегистрирован алиас: ${prefix}${aliases[index]}`);
+            hearManager.hear(regex, handler);
+        });
+        console.log(`[INFO] Команда ${prefix}${commandName} из категории ${categoryName} и её алиасы успешно зарегистрированы.\n`);
+    });
+});
 
-console.log('Бот запущен!');
-module.exports = vk;
+checkDatabaseConnection().then(() => {
+    vk.updates.start().catch(console.error);
+    console.log('Бот запущен!');
+}).catch(err => {
+    console.error('[ERROR] Бот не запущен из-за ошибки базы данных.');
+});
+
+module.exports = { hearManager, sessionManager, sceneManager };

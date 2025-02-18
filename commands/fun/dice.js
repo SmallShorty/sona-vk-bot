@@ -1,6 +1,6 @@
-require('../utils/stringExtensions');
-const vk = require('..');
-const { getUserInfo } = require('../utils/getUserInfo');
+require('../../utils/stringExtensions');
+const vk = require('../..');
+const { getUserInfo } = require('../../utils/getUserInfo');
 
 const getRoll = (range, advantage = null) => {
     const roll1 = Math.floor(Math.random() * range) + 1;
@@ -33,12 +33,12 @@ module.exports = async (context) => {
         }
 
         actions = context.text.slice(args[0].length + args[1].length + 2)
-            .split(/,|\n/) // Разделяем по запятой или новой строке
+            .split(/,|\n/) 
             .map(action => action.trim())
             .filter(Boolean);
     } else {
         actions = context.text.slice(args[0].length + 1)
-            .split(/,|\n/) // Разделяем по запятой или новой строке
+            .split(/,|\n/) 
             .map(action => action.trim())
             .filter(Boolean);
     }
