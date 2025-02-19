@@ -10,7 +10,6 @@ class Chat extends Model {
         return chat ? chat.pinned_message_context : null;
     }
 
-
     static async updatePinnedMessage(chatId, pinnedMessageContext) {
         const chat = await this.findByPk(chatId);
         if (chat) {
@@ -29,6 +28,20 @@ class Chat extends Model {
             return chat;
         }
         return null;
+    }
+
+    // Новый метод для обновления данных чата
+    static async updateChat(chatId, data) {
+        const [chat, created] = await this.findOrCreate({
+            where: { id: chatId },
+            defaults: data,
+        });
+
+        if (!created) {
+            await chat.update(data);
+        }
+
+        return chat;
     }
 }
 

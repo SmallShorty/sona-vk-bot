@@ -1,11 +1,16 @@
 const { Sequelize } = require('sequelize');
 
-const sequelize = new Sequelize(process.env.POSTGRES_DB, process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, {
-  host: 'localhost',
-  dialect: 'postgres',
-  logging: false,
-});
-
+const sequelize = new Sequelize(
+  process.env.POSTGRES_DB,       // Имя базы данных
+  process.env.POSTGRES_USER,     // Имя пользователя
+  process.env.POSTGRES_PASSWORD, // Пароль
+  {
+    host: process.env.POSTGRES_HOST || 'localhost', // Хост (IP или доменное имя удаленного сервера)
+    port: process.env.POSTGRES_PORT || 5432,        // Порт (по умолчанию 5432)
+    dialect: 'postgres',                           // Диалект (PostgreSQL)
+    logging: false,                                // Отключение логов запросов
+  }
+);
 sequelize.sync()
     .then(() => {
         console.log('Database synced');
