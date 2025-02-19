@@ -4,7 +4,6 @@ function generateKeyboard(buttons, userId, inline = false, oneTime = false) {
     // Initialize the keyboard builder with inline and oneTime options
     const keyboard = Keyboard.builder();
 
-    // Set the inline and oneTime properties
     if (inline) {
         keyboard.inline();
     }
