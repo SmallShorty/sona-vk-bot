@@ -36,8 +36,6 @@ module.exports = async (context) => {
         .filter(group => group !== null)
         .sort((a, b) => a.category.localeCompare(b.category));
 
-    console.log('Categorized Commands:', categorizedCommands);
-
     if (context.text.split(' ').length < 2) {
         let categoriesList = '📂 Доступные категории команд:\n';
         categorizedCommands.forEach(group => {

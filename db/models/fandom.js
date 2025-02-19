@@ -1,5 +1,6 @@
 const { Model, DataTypes } = require('sequelize');
 const { sequelize } = require('../db'); // Импортируем sequelize
+const Chat = require('../models/chat')
 
 class Fandom extends Model {
   /**
@@ -20,13 +21,13 @@ class Fandom extends Model {
    */
   static async createFandom(chatId, name) {
     const normalizedName = name.toLowerCase();
-  
+
     // Проверяем, существует ли чат
     const chat = await Chat.findByPk(chatId);
     if (!chat) {
       throw new Error(`Чат с ID ${chatId} не найден.`);
     }
-  
+
     // Проверяем, существует ли фандом с таким именем
     const existing = await Fandom.findOne({
       where: {
@@ -34,19 +35,19 @@ class Fandom extends Model {
         name: normalizedName,
       }
     });
-  
+
     if (existing) {
       const error = new Error('Фандом уже существует');
       error.name = 'AlreadyExistsError';
       throw error;
     }
-  
+
     return await Fandom.create({
       chat_id: chatId,
       name: normalizedName,
     });
   }
-  
+
   /**
  * Обновляет имя фандома в заданном чате.
  * @param {number} chatId - Идентификатор чата.

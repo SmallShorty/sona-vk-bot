@@ -13,10 +13,10 @@ const sequelize = new Sequelize(
 );
 sequelize.sync()
     .then(() => {
-        console.log('Database synced');
+        console.log('[INFO] База данных синхронизирована.');
     })
     .catch((error) => {
-        console.error('Error syncing database:', error);
+        console.error('[INFO] Ошибка синхронизации базы данных: ', error);
     });
 
 const checkDatabaseConnection = async () => {
