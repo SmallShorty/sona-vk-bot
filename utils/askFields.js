@@ -1,40 +1,65 @@
+const awaitCallbackEvent = require('../utils/awaitCallbackEvent');
+
 async function askFields(context, fields) {
     const responses = {};
 
     for (const field of fields) {
-        const { questionText, keyboard, validation, skippable = false } = field;
-        let answer = null;
+        const { name, questionText, keyboard, validation, skippable = false } = field;
+        let validAnswer = false;
 
-        while (true) {
+        while (!validAnswer) {
             try {
-                answer = keyboard
-                    ? await context.question(questionText, { target_id: context.senderId, keyboard })
-                    : await context.question(questionText, { target_id: context.senderId });
+                // Если задана клавиатура, предполагаем, что ответ через callback
+                if (keyboard) {
+                    // Отправляем сообщение с клавиатурой для выбора
+                    await context.send({
+                        message: questionText,
+                        keyboard
+                    });
+                    console.log(`[LOG] Сообщение с callback-клавиатурой отправлено для поля "${name}"`);
 
-                console.log(`Получен ответ: ${answer.text}`); 
+                    // Ожидаем событие callback от нужного пользователя
+                    const event = await awaitCallbackEvent(context, (eventContext) => {
+                        // Можно добавить фильтрацию по payload или типу кнопки
+                        console.log('[DEBUG] Получен event в фильтре:', eventContext);
+                        return eventContext.userId === context.senderId;  // Фильтруем по ID пользователя
+                    });
 
-                const lowerText = answer.text && answer.text.toLowerCase();
+                    console.log('[DEBUG] Данные callback-кнопки:', event);
 
-                if (lowerText === 'отмена') {
-                    console.log('Пользователь отменил ввод.'); 
-                    return null;
+                    // Сохраняем полученный payload как ответ
+                    responses[name] = event.eventPayload;
+                    validAnswer = true;
+                } else {
+                    // Если клавиатура не задана, запрашиваем текстовый ответ
+                    const answer = await context.question(questionText, { target_id: context.senderId });
+                    console.log(`[LOG] Получено сообщение: "${answer.text}" от пользователя ${context.senderId}`);
+
+                    const lowerText = answer.text?.toLowerCase();
+
+                    if (lowerText === 'отмена') {
+                        console.log('[LOG] Пользователь отменил ввод.');
+                        return null;
+                    }
+
+                    if (skippable && (lowerText === 'пропустить' || lowerText === '-')) {
+                        console.log(`[LOG] Поле "${name}" пропущено.`);
+                        responses[name] = null;
+                        validAnswer = true;
+                        continue;
+                    }
+
+                    // Проверка валидации текстового ответа
+                    if (validation && !validation(answer)) {
+                        console.log(`[WARN] Ответ не прошел валидацию: "${answer.text}"`);
+                        continue;
+                    }
+
+                    responses[name] = answer.text;
+                    validAnswer = true;
                 }
-
-                if (skippable && (lowerText === 'пропустить' || lowerText === '-')) {
-                    console.log(`Поле "${field.name}" пропущено.`); 
-                    responses[field.name] = null;
-                    break;
-                }
-
-                if (validation && !validation(answer)) {
-                    console.log(`Ответ не прошел валидацию: ${answer.text}`); 
-                    continue;
-                }
-
-                responses[field.name] = answer.payload ? answer.payload : answer.text;
-                break;
             } catch (error) {
-                console.error(`Ошибка при запросе ответа: ${error.message}`); 
+                console.error(`[ERROR] Ошибка при запросе ответа для поля "${name}": ${error.message}`);
                 throw new Error('Ввод был прерван из-за ошибки.');
             }
         }

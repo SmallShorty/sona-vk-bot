@@ -1,7 +1,6 @@
 const { Keyboard } = require('vk-io');
 
 function generateCallbackKeyboard(buttons, userId, inline = false, oneTime = false) {
-    // Инициализируем билдер клавиатуры
     const keyboard = Keyboard.builder();
 
     if (inline) {
@@ -25,7 +24,6 @@ function generateCallbackKeyboard(buttons, userId, inline = false, oneTime = fal
             userId
         };
 
-        // Добавляем callback-кнопку
         keyboard.callbackButton({
             label,
             payload: buttonPayload

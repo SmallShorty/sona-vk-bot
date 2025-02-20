@@ -3,6 +3,7 @@ const Character = require('../../db/models/character');
 const parsePayload = require('../../utils/parsePayload');
 const generateKeyboard = require('../../utils/generateKeyboard');
 const askFields = require('../../utils/askFields');
+const generateCallbackKeyboard = require('../../utils/generateCallbackKeyboard');
 
 module.exports = async function deleteCharacter(context, args) {
     const userId = args.id || context.senderId;
@@ -18,16 +19,12 @@ module.exports = async function deleteCharacter(context, args) {
         {
             name: 'character',
             questionText: responses.requests.enter + 'персонажа, которого ходите удалить',
-            keyboard: generateKeyboard(characterButtons, context.senderId, true, true)
+            keyboard: generateCallbackKeyboard(characterButtons, context.senderId, true, true)
         }
     ]
-    const characterData = await askFields(context, fields);
-    if (!characterData) {
+    const data = await askFields(context, fields);
+    if (!data) {
         return responses.errors.default;
     }
-    const characterId = parsePayload(characterData, 'id');
-    if (!characterId) {
-        throw Error
-    }
-    return await Character.deleteCharacter(characterId);
+    return await Character.deleteCharacter(data.character.id);
 }

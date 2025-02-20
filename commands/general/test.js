@@ -1,8 +1,28 @@
 const vk = require("../../vkClient");
-const generateCharacterList  = require("../../utils/generateCharacterList");
+const { Keyboard } = require('vk-io');
 
 module.exports = async (context) => {
-    const list = await generateCharacterList(context.peerId);
-    console.log(list)
-    return await context.send(list)
+    await context.send({
+        message: 'Нажмите кнопку:',
+        keyboard: Keyboard.builder()
+            .callbackButton({
+                label: 'Нажми меня',
+                payload: { command: 'button_clicked' }
+            })
+            .oneTime()
+    });
 }
+
+// vk.updates.on('message_event', async (context) => {
+//     if (context.eventPayload.command === 'button_clicked') {
+//         await vk.api.messages.sendMessageEventAnswer({
+//             event_id: context.eventId,
+//             user_id: context.userId,
+//             peer_id: context.peerId,
+//             event_data: JSON.stringify({
+//                 type: 'show_snackbar',
+//                 text: 'Кнопка нажата!'
+//             })
+//         });
+//     }
+// });

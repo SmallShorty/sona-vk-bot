@@ -9,11 +9,11 @@ const Chat = require('./db/models/chat');
 
 const prefix = '/';
 
-// // Логирование входящих сообщений
-// vk.updates.on('message_new', async (context, next) => {
-//     console.log(`[LOG] Получено сообщение: "${context.text}" от пользователя ${context.senderId}`);
-//     await next();
-// });
+// Логирование входящих сообщений
+vk.updates.on('message_new', async (context, next) => {
+    console.log(`[LOG] Получено сообщение: "${context.text}" от пользователя ${context.senderId}`);
+    await next();
+});
 
 vk.updates.use(questionManager.middleware);
 vk.updates.on('message_new', sessionManager.middleware);
