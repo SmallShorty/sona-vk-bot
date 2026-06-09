@@ -1,3 +1,4 @@
+require('./config/env'); // проверяет обязательные переменные окружения при запуске
 const vk = require('./vkClient');
 const commands_data = require("./commands/index.json");
 const { checkDatabaseConnection } = require('./db/db');
