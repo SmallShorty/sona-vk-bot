@@ -1,4 +1,5 @@
 const vk = require('../../vkClient');
+const { parseMessage } = require('../../utils/parseMessage');
 const { renderDialogue } = require('../../utils/renderDialogue');
 const { mentionUser } = require('../../utils/getUserInfo');
 

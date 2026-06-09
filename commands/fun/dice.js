@@ -3,7 +3,7 @@ const { getUserInfo } = require('../../utils/getUserInfo');
 
 const getRoll = (range, advantage = null) => {
     const roll1 = Math.floor(Math.random() * range) + 1;
-    if (advantage == null ) {
+    if (advantage === null) {
         return { result : roll1 }
     }
     const roll2 = Math.floor(Math.random() * range) + 1;

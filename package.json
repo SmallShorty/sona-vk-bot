@@ -3,7 +3,9 @@
     "start": "node index.js",
     "start:test": "cross-env NODE_ENV=test node index.js",
     "dev": "nodemon index.js",
-    "dev:test": "cross-env NODE_ENV=test nodemon index.js"
+    "dev:test": "cross-env NODE_ENV=test nodemon index.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@vk-io/hear": "^1.1.1",
@@ -19,6 +21,8 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
+    "eslint": "^10.4.1",
+    "globals": "^17.6.0",
     "nodemon": "^3.1.7"
   }
 }
