@@ -1,4 +1,5 @@
 'use strict';
+require('dotenv').config();
 const { cleanEnv, str, port } = require('envalid');
 
 module.exports = cleanEnv(process.env, {
