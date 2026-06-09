@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "start": "cross-env NODE_PATH=. node index.js",
-    "start:test": "cross-env NODE_ENV=test NODE_PATH=. node index.js",
+    "start": "cross-env NODE_PATH=. node index.js | npx pino-pretty",
+    "start:test": "cross-env NODE_ENV=test NODE_PATH=. node index.js | npx pino-pretty",
     "dev": "cross-env NODE_PATH=. nodemon index.js | npx pino-pretty",
     "dev:test": "cross-env NODE_ENV=test NODE_PATH=. nodemon index.js | npx pino-pretty",
     "lint": "eslint .",

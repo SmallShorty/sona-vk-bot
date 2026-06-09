@@ -1,12 +1,23 @@
+// Fix Windows console encoding for UTF-8 (Cyrillic support)
+if (process.platform === 'win32') {
+    const { execSync } = require('child_process');
+    try {
+        execSync('chcp 65001', { stdio: 'ignore' });
+    } catch (e) {
+        // Silently fail if chcp is not available
+    }
+}
+
 require('config/env'); // проверяет обязательные переменные окружения при запуске
 const vk = require('vkClient');
-const commands_data = require("commands/index.json");
 const { checkDatabaseConnection } = require('db/db');
 const { hearManager, sessionManager, sceneManager, questionManager } = require('managers');
 const { PREFIX } = require('config');
 const logger = require('utils/logger');
 const path = require('path');
 const fs = require('fs');
+
+const commands_data = JSON.parse(fs.readFileSync(path.join(__dirname, 'commands/index.json'), 'utf8'));
 
 vk.updates.use(questionManager.middleware);
 vk.updates.on('message_new', sessionManager.middleware);
@@ -19,7 +30,7 @@ fs.readdirSync(eventsPath).forEach((file) => {
     if (file.endsWith('.js')) {
         const eventHandler = require(path.join(eventsPath, file));
         eventHandler(vk);
-        logger.debug({ file }, 'обработчик загружен');
+        logger.debug({ file }, 'event handler loaded');
     }
 });
 
@@ -29,7 +40,7 @@ Object.entries(commands_data).forEach(([category, data]) => {
     commands.forEach((commandData) => {
         const { name: commandName, wip, aliases } = commandData;
         if (wip) {
-            logger.debug({ command: commandName, category: categoryName }, 'команда помечена как WIP, пропускаем');
+            logger.debug({ command: commandName, category: categoryName }, 'command marked as WIP, skipping');
             return;
         }
         const handler = require(`commands/${category}/${commandName}.js`);
@@ -37,17 +48,17 @@ Object.entries(commands_data).forEach(([category, data]) => {
         regexArray.forEach((regex) => {
             hearManager.hear(regex, handler);
         });
-        logger.debug({ command: commandName, aliases }, 'команда зарегистрирована');
+        logger.debug({ command: commandName, aliases }, 'command registered');
     });
 });
 
 require('db/associations');
 
 checkDatabaseConnection().then(() => {
-    vk.updates.start().catch((err) => logger.error({ err }, 'ошибка запуска polling'));
-    logger.info('бот запущен');
+    vk.updates.start().catch((err) => logger.error({ err }, 'error starting polling'));
+    logger.info('bot started');
 }).catch(() => {
-    logger.error('бот не запущен из-за ошибки базы данных');
+    logger.error('bot failed to start due to database error');
 });
 
 module.exports = { hearManager, sessionManager, sceneManager };
