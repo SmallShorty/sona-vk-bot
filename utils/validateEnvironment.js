@@ -1,5 +1,5 @@
 const vk = require('vkClient');
-const responses = require('data/responses.json');
+const r = require('utils/responses');
 const { VK_PEER_OFFSET } = require('config');
 const logger = require('utils/logger');
 
@@ -8,7 +8,7 @@ const validateEnvironment = async (context, { requireChat = false, requireAdmin 
     if (requireBotAdmin) requireChat = true;
 
     if (requireChat && !context.isChat) {
-        await context.send(responses.errors.chat_only);
+        await context.send(r.errors.chat_only);
         return false;
     }
 
@@ -22,7 +22,7 @@ const validateEnvironment = async (context, { requireChat = false, requireAdmin 
                 const botId = context.peerId - VK_PEER_OFFSET;
                 const botMember = response.items.find(item => item.member_id === botId);
                 if (!botMember || !botMember.is_admin) {
-                    await context.send('У бота нет прав администратора в этой беседе. Пожалуйста, назначьте бота администратором.');
+                    await context.send(r.errors.no_bot_admin);
                     return false;
                 }
             }
@@ -30,7 +30,7 @@ const validateEnvironment = async (context, { requireChat = false, requireAdmin 
             if (requireAdmin) {
                 const userMember = response.items.find(item => item.member_id === context.senderId);
                 if (!userMember || !(userMember.is_admin || userMember.is_owner)) {
-                    await context.send(responses.errors.permission_denied);
+                    await context.send(r.errors.permission_denied);
                     return false;
                 }
             }
@@ -38,7 +38,7 @@ const validateEnvironment = async (context, { requireChat = false, requireAdmin 
             logger.error({ error }, 'error getting chat members');
 
             if (error.code === 917) {
-                await context.send(responses.errors.no_admin_rights);
+                await context.send(r.errors.no_admin_rights);
                 return false;
             }
 

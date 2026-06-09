@@ -1,6 +1,6 @@
 const Fandom = require('db/models/fandom');
 const Character = require('db/models/character');
-const responses = require('data/responses.json');
+const r = require('utils/responses');
 const generateKeyboard = require('utils/generateKeyboard');
 const askFields = require('utils/askFields');
 const parsePayload = require('utils/parsePayload');
@@ -10,14 +10,14 @@ module.exports = async function editCharacter(context, args) {
     const content = contentParts.join(' ');
 
     if (!content) {
-        return context.send(responses.errors.invalid_input + ' Не забудьте указать, на что вы хотите изменить.');
+        return context.send(r.format(r.errors.invalid_input, { detail: ' Не забудьте указать, на что вы хотите изменить.' }));
     }
 
     const userId = args.id || context.senderId;
     const characters = await Character.getCharactersByUser(context.peerId, userId);
 
     if (!characters.length) {
-        return context.send(responses.errors.not_found);
+        return context.send(r.errors.not_found);
     }
 
     // Генерация клавиатуры выбора персонажа
@@ -29,13 +29,13 @@ module.exports = async function editCharacter(context, args) {
     const characterData = await askFields(context, [
         {
             name: 'character',
-            questionText: responses.requests.enter + ' персонажа, которого хотите изменить',
+            questionText: r.request('enter', 'персонажа, которого хотите изменить'),
             keyboard: generateKeyboard(characterButtons, context.senderId, true, true)
         }
     ]);
 
     if (!characterData?.character) {
-        return context.send(responses.errors.default);
+        return context.send(r.errors.default);
     }
 
     const characterId = parsePayload(characterData, 'id');
@@ -54,17 +54,17 @@ module.exports = async function editCharacter(context, args) {
                 where: { name: content, chat_id: context.peerId }
             });
             if (!fandomRecord) {
-                return context.send(responses.errors.not_found);
+                return context.send(r.errors.not_found);
             }
             updateData.fandom_id = fandomRecord.id;
             break;
         }
         default:
-            return context.send(responses.errors.invalid_input);
+            return context.send(r.errors.invalid_input);
     }
 
     if (!characterId) {
-        return context.send(responses.errors.not_found);
+        return context.send(r.errors.not_found);
     }
     await Character.updateCharacter(characterId, updateData);
 };

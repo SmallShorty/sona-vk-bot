@@ -1,5 +1,5 @@
 const Chat = require('db/models/chat');
-const responses = require('data/responses.json');
+const r = require('utils/responses');
 const logger = require('utils/logger');
 
 module.exports = (vk) => {
@@ -8,11 +8,11 @@ module.exports = (vk) => {
             if (context.peerId !== context.senderId) {
                 await Chat.create({ id: context.peerId });
             }
-            await context.send(responses.greetings);
+            await context.send(r.greetings);
             logger.info({ peerId: context.peerId }, 'new chat added');
         } catch (error) {
             logger.error({ error, peerId: context.peerId }, 'error adding chat');
-            context.send(responses.errors.db);
+            context.send(r.errors.db);
         }
     });
 };

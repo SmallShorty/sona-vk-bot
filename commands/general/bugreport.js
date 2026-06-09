@@ -1,7 +1,7 @@
 const { mentionUser } = require("utils/getUserInfo");
 const vk = require("vkClient");
 const crypto = require("crypto");
-const responses = require('data/responses.json');
+const r = require('utils/responses');
 const { BUG_REPORT_PEER_ID } = require('config');
 
 module.exports = async (context) => {
@@ -32,6 +32,6 @@ module.exports = async (context) => {
             random_id: crypto.randomInt(1, 2_000_000_000),
         });
     } catch (_error) {
-        await context.send(responses.errors.default);
+        await context.send(r.errors.default);
     }
 };

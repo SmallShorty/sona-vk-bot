@@ -1,4 +1,4 @@
-const responses = require('data/responses.json');
+const r = require('utils/responses');
 const Character = require('db/models/character');
 const parsePayload = require('utils/parsePayload');
 const generateKeyboard = require('utils/generateKeyboard');
@@ -8,7 +8,7 @@ module.exports = async function deleteCharacter(context, args) {
     const userId = args.id || context.senderId;
     const characters = await Character.getCharactersByUser(context.peerId, userId);
     if (characters.length === 0 || !characters) {
-        return context.send(responses.errors.not_found);
+        return context.send(r.errors.not_found);
     }
     const characterButtons = characters.map(character => ({
         label: character.dataValues.nickname,
@@ -17,13 +17,13 @@ module.exports = async function deleteCharacter(context, args) {
     const fields = [
         {
             name: 'character',
-            questionText: responses.requests.enter + 'персонажа, которого ходите удалить',
+            questionText: r.request('enter', 'персонажа, которого хотите удалить'),
             keyboard: generateKeyboard(characterButtons, context.senderId, true, true)
         }
     ]
     const characterData = await askFields(context, fields);
     if (!characterData) {
-        return context.send(responses.errors.default);
+        return context.send(r.errors.default);
     }
     const characterId = parsePayload(characterData, 'id');
     if (!characterId) {

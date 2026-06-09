@@ -1,4 +1,4 @@
-const responses = require('data/responses.json');
+const r = require('utils/responses');
 const logger = require('utils/logger');
 const Fandom = require('db/models/fandom');
 const Character = require('db/models/character');
@@ -16,18 +16,18 @@ module.exports = async function addCharacter(context, args) {
   const fields = [
     {
       name: 'nickname',
-      questionText: responses.requests.enter + 'имя персонажа.',
+      questionText: r.request('enter', 'имя персонажа'),
       validation: (input) => input.text.trim().length > 0
     },
     {
       name: 'icon',
-      questionText: responses.requests.enter + 'значок для персонажа. ' + responses.requests.skip,
+      questionText: r.request('enter', 'значок для персонажа', true),
       skippable: true,
       validation: (input) => isEmoji(input)
     },
     {
       name: 'fandom',
-      questionText: responses.requests.сhoose + 'фандом для персонажа. ' + responses.requests.skip,
+      questionText: r.request('choose', 'фандом для персонажа', true),
       skippable: true,
       keyboard: generateKeyboard(fandomButtons, context.senderId, true)
     }
@@ -36,7 +36,7 @@ module.exports = async function addCharacter(context, args) {
   try {
     const characterData = await askFields(context, fields);
     if (!characterData) {
-      return await context.send(responses.errors.default);
+      return await context.send(r.errors.default);
     }
 
 

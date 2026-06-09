@@ -1,6 +1,6 @@
 'use strict';
 const logger = require('utils/logger');
-const responses = require('data/responses.json');
+const r = require('utils/responses');
 
 /**
  * Оборачивает обработчик команды в стандартный try/catch.
@@ -15,11 +15,11 @@ function wrapCommand(handler) {
             logger.error({ err, peerId: context.peerId, senderId: context.senderId }, 'unhandled command error');
 
             const errorMap = {
-                NotFoundError:      responses.errors.not_found,
-                AlreadyExistsError: responses.errors.already_exists,
+                NotFoundError:      r.errors.not_found,
+                AlreadyExistsError: r.errors.already_exists,
             };
 
-            const message = errorMap[err.name] || responses.errors.default;
+            const message = errorMap[err.name] || r.errors.default;
             await context.send(message);
         }
     };

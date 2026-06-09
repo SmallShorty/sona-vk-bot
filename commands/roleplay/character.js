@@ -1,5 +1,5 @@
 const Character = require('db/models/character');
-const responses = require('data/responses.json');
+const r = require('utils/responses');
 const validateEnvironment = require('utils/validateEnvironment');
 const wrapCommand = require('utils/wrapCommand');
 
@@ -28,7 +28,7 @@ module.exports = wrapCommand(async (context) => {
             ? await Character.getCharactersByUser(chat_id, args.id)
             : await Character.getAllCharactersInChat(chat_id);
 
-        if (!characters.length) return context.send(responses.errors.not_found);
+        if (!characters.length) return context.send(r.errors.not_found);
 
         return context.send(await generateCharacterList(characters));
     }
@@ -36,15 +36,15 @@ module.exports = wrapCommand(async (context) => {
     const actions = {
         'добавить': async () => {
             await addCharacter(context, args);
-            return responses.success.added;
+            return r.success.added;
         },
         'изменить': async () => {
             await editCharacter(context, args);
-            return responses.success.updated;
+            return r.success.updated;
         },
         'удалить': async () => {
             await deleteCharacter(context, args);
-            return responses.success.deleted;
+            return r.success.deleted;
         }
     };
 

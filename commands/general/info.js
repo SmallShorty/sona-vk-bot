@@ -1,6 +1,6 @@
 const Chat = require('db/models/chat');
 const validateEnvironment = require('utils/validateEnvironment');
-const responses = require('data/responses.json');
+const r = require('utils/responses');
 const logger = require('utils/logger');
 
 module.exports = async (context) => {
@@ -16,34 +16,34 @@ module.exports = async (context) => {
     switch (command) {
         case null:
             try {
-                response = await Chat.getPinnedMessage(chatId) || responses.errors.not_found;
+                response = await Chat.getPinnedMessage(chatId) || r.format(r.errors.not_found);
             } catch (err) {
                 logger.error({ err }, 'error in info command');
-                response = responses.errors.db;
+                response = r.errors.db;
             }
             break;
         case 'добавить':
         case 'изменить': {
             const newPinnedMessage = await context.question(
-                responses.requests.enter + 'текст для закреплённого сообщения',
+                r.request('enter', 'текст для закреплённого сообщения'),
                 { target_id: targetUserId }
             );
             try {
                 await Chat.updatePinnedMessage(chatId, newPinnedMessage.text);
-                response = responses.success.updated;
+                response = r.success.updated;
             } catch (err) {
                 logger.error({ err }, 'error in info command');
-                response = responses.errors.db;
+                response = r.errors.db;
             }
             break;
         }
         case 'удалить':
             try {
                 await Chat.deletePinnedMessage(chatId);
-                response = responses.success.deleted;
+                response = r.success.deleted;
             } catch (err) {
                 logger.error({ err }, 'error in info command');
-                response = responses.errors.db;
+                response = r.errors.db;
             }
             break;
     }
@@ -51,6 +51,6 @@ module.exports = async (context) => {
         await context.send(response);
     } catch (err) {
         logger.error({ err }, 'error sending info response');
-        await context.send(responses.errors.default);
+        await context.send(r.errors.default);
     }
 };

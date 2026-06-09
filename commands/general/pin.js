@@ -1,13 +1,13 @@
 const vk = require("vkClient");
 const Chat = require("db/models/chat");
 const Character = require("db/models/character");
-const responses = require("data/responses.json");
+const r = require("utils/responses");
 const generateCharacterList = require("utils/generateCharacterList");
 const logger = require("utils/logger");
 const wrapCommand = require("utils/wrapCommand");
 
 module.exports = wrapCommand(async (context) => {
-    let pinnedMessage = await Chat.getPinnedMessage(context.peerId) || responses.errors.not_found;
+    let pinnedMessage = await Chat.getPinnedMessage(context.peerId) || r.format(r.errors.not_found);
     const characters = await Character.getAllCharactersInChat(context.peerId);
 
     if (characters.length !== 0) {

@@ -1,5 +1,5 @@
 const commands_data = require("commands/index.json");
-const responses = require('data/responses.json');
+const r = require('utils/responses');
 
 function getCommandByAlias(alias) {
     for (const category in commands_data) {
@@ -66,7 +66,7 @@ module.exports = async (context) => {
         if (command) {
             await context.send(formatCommandResponse(command));
         } else {
-            await context.send(responses.errors.not_found);
+            await context.send(r.errors.not_found);
         }
     }
 };
