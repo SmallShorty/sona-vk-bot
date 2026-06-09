@@ -15,7 +15,7 @@ module.exports = async (context) => {
     const mention = await mentionUser(context.senderId);
 
     if (!buffer || !Buffer.isBuffer(buffer)) {
-        logger.error('renderDialogue вернул некорректный buffer');
+        logger.error('renderDialogue returned invalid buffer');
         await context.send('Произошла ошибка при создании изображения.');
         return;
     }
@@ -36,7 +36,7 @@ module.exports = async (context) => {
             attachment
         });
     } catch (error) {
-        logger.error({ error }, 'ошибка при загрузке или отправке скриншота');
+        logger.error({ error }, 'error loading or sending screenshot');
         await context.send('Произошла ошибка при отправке документа.');
     }
 };

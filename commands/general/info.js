@@ -18,7 +18,7 @@ module.exports = async (context) => {
             try {
                 response = await Chat.getPinnedMessage(chatId) || responses.errors.not_found;
             } catch (err) {
-                logger.error({ err }, 'ошибка в команде info');
+                logger.error({ err }, 'error in info command');
                 response = responses.errors.db;
             }
             break;
@@ -32,7 +32,7 @@ module.exports = async (context) => {
                 await Chat.updatePinnedMessage(chatId, newPinnedMessage.text);
                 response = responses.success.updated;
             } catch (err) {
-                logger.error({ err }, 'ошибка в команде info');
+                logger.error({ err }, 'error in info command');
                 response = responses.errors.db;
             }
             break;
@@ -42,7 +42,7 @@ module.exports = async (context) => {
                 await Chat.deletePinnedMessage(chatId);
                 response = responses.success.deleted;
             } catch (err) {
-                logger.error({ err }, 'ошибка в команде info');
+                logger.error({ err }, 'error in info command');
                 response = responses.errors.db;
             }
             break;
@@ -50,7 +50,7 @@ module.exports = async (context) => {
     try {
         await context.send(response);
     } catch (err) {
-        logger.error({ err }, 'ошибка при отправке ответа info');
+        logger.error({ err }, 'error sending info response');
         await context.send(responses.errors.default);
     }
 };

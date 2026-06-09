@@ -35,7 +35,7 @@ const validateEnvironment = async (context, { requireChat = false, requireAdmin 
                 }
             }
         } catch (error) {
-            logger.error({ error }, 'ошибка при получении участников беседы');
+            logger.error({ error }, 'error getting chat members');
 
             if (error.code === 917) {
                 await context.send(responses.errors.no_admin_rights);

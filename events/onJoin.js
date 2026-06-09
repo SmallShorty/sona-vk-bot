@@ -9,9 +9,9 @@ module.exports = (vk) => {
                 await Chat.create({ id: context.peerId });
             }
             await context.send(responses.greetings);
-            logger.info({ peerId: context.peerId }, 'новая беседа добавлена');
+            logger.info({ peerId: context.peerId }, 'new chat added');
         } catch (error) {
-            logger.error({ error, peerId: context.peerId }, 'ошибка при добавлении беседы');
+            logger.error({ error, peerId: context.peerId }, 'error adding chat');
             context.send(responses.errors.db);
         }
     });

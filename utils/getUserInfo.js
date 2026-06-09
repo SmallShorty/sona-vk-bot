@@ -30,7 +30,7 @@ async function getUserInfo(userIds, fields = [], nameCase = 'nom') {
         });
         return response;
     } catch (error) {
-        logger.error({ error }, 'ошибка при получении данных пользователя');
+        logger.error({ error }, 'error getting user data');
         throw error;
     }
 }
@@ -45,7 +45,7 @@ async function mentionUser(userIds) {
             throw new Error(`Пользователь ${userIds} не найден`);
         }
     } catch (error) {
-        logger.error({ error }, 'ошибка при упоминании пользователя');
+        logger.error({ error }, 'error mentioning user');
         throw error;
     }
 }

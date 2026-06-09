@@ -47,7 +47,7 @@ module.exports = async function addCharacter(context, args) {
         const parsedFandom = JSON.parse(fandomPayload);
         fandomId = parsedFandom.id;
       } catch (e) {
-        logger.error({ e }, 'ошибка при парсинге payload фандома');
+        logger.error({ e }, 'error parsing fandom payload');
       }
     }
 
@@ -61,7 +61,7 @@ module.exports = async function addCharacter(context, args) {
     });
     
   } catch (error) {
-    logger.error({ error }, 'ошибка при заполнении формы персонажа');
+    logger.error({ error }, 'error filling character form');
     throw Error;
   }
 };

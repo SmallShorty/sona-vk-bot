@@ -37,7 +37,7 @@ module.exports = wrapCommand(async (context) => {
           await Fandom.createFandom(chat_id, fandomName);
           response = responses.success.added;
         } catch (error) {
-          logger.error({ error }, 'ошибка при добавлении фандома');
+          logger.error({ error }, 'error adding fandom');
           response = error.name === 'AlreadyExistsError'
             ? `${responses.errors.already_exists} Попробуй выбрать другое имя для фандома.`
             : responses.errors.db;
@@ -54,7 +54,7 @@ module.exports = wrapCommand(async (context) => {
           await Fandom.updateFandom(chat_id, oldName, newName);
           response = responses.success.updated;
         } catch (error) {
-          logger.error({ error }, 'ошибка при изменении фандома');
+          logger.error({ error }, 'error editing fandom');
           response = error.name === 'NotFoundError'
             ? `${responses.errors.not_found} Фандома с таким именем не существует.`
             : error.name === 'AlreadyExistsError'
@@ -68,7 +68,7 @@ module.exports = wrapCommand(async (context) => {
           await Fandom.deleteFandom(chat_id, fandomName);
           response = responses.success.deleted;
         } catch (error) {
-          logger.error({ error }, 'ошибка при удалении фандома');
+          logger.error({ error }, 'error deleting fandom');
           response = error.name === 'NotFoundError'
             ? `${responses.errors.not_found} Фандома с таким именем не существует.`
             : responses.errors.db;
@@ -83,7 +83,7 @@ module.exports = wrapCommand(async (context) => {
   try {
     await context.send(response);
   } catch (err) {
-    logger.error({ err }, 'ошибка при отправке сообщения');
+    logger.error({ err }, 'error sending message');
     await context.send(responses.errors.default);
   }
 });

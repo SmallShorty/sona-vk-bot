@@ -15,18 +15,18 @@ const sequelize = new Sequelize(
 
 sequelize.sync()
     .then(() => {
-        logger.info('база данных синхронизирована');
+        logger.info('database synchronized');
     })
     .catch((error) => {
-        logger.error({ error }, 'ошибка синхронизации базы данных');
+        logger.error({ error }, 'error synchronizing database');
     });
 
 const checkDatabaseConnection = async () => {
     try {
         await sequelize.authenticate();
-        logger.info('подключение к базе данных успешно');
+        logger.info('successfully connected to database');
     } catch (err) {
-        logger.error({ err }, 'ошибка подключения к базе данных');
+        logger.error({ err }, 'error connecting to database');
         process.exit(1);
     }
 };

@@ -26,6 +26,6 @@ module.exports = wrapCommand(async (context) => {
             message_id: sentMessageId
         });
     } catch (error) {
-        logger.error({ error }, 'не удалось закрепить сообщение');
+        logger.error({ error }, 'failed to pin message');
     }
 });

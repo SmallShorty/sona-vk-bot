@@ -12,7 +12,7 @@ function wrapCommand(handler) {
         try {
             await handler(context);
         } catch (err) {
-            logger.error({ err, peerId: context.peerId, senderId: context.senderId }, 'необработанная ошибка команды');
+            logger.error({ err, peerId: context.peerId, senderId: context.senderId }, 'unhandled command error');
 
             const errorMap = {
                 NotFoundError:      responses.errors.not_found,

@@ -16,12 +16,12 @@ async function askFields(context, fields) {
                 const lowerText = answer.text && answer.text.toLowerCase();
 
                 if (lowerText === 'отмена') {
-                    logger.debug({ field: field.name }, 'пользователь отменил ввод');
+                    logger.debug({ field: field.name }, 'user cancelled input');
                     return null;
                 }
 
                 if (skippable && (lowerText === 'пропустить' || lowerText === '-')) {
-                    logger.debug({ field: field.name }, 'поле пропущено');
+                    logger.debug({ field: field.name }, 'field skipped');
                     responses[field.name] = null;
                     break;
                 }
@@ -33,7 +33,7 @@ async function askFields(context, fields) {
                 responses[field.name] = answer.payload ? answer.payload : answer.text;
                 break;
             } catch (error) {
-                logger.error({ error }, 'ошибка при запросе ответа');
+                logger.error({ error }, 'error requesting answer');
                 throw new Error('Ввод был прерван из-за ошибки.');
             }
         }

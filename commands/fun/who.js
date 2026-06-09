@@ -20,7 +20,7 @@ async function getAdjectiveGenders(adjective) {
         });
         return response.data;
     } catch (error) {
-        logger.error({ error }, 'ошибка при запросе к API getAdjectiveGenders');
+        logger.error({ error }, 'error requesting API getAdjectiveGenders');
     }
 }
 
@@ -35,7 +35,7 @@ async function getNounGender(noun) {
         });
         return response.data
     } catch (error) {
-        logger.error({ error }, 'ошибка при запросе к API getNounGender');
+        logger.error({ error }, 'error requesting API getNounGender');
     }
 }
 

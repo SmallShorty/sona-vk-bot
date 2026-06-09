@@ -9,7 +9,7 @@ function parsePayload(data, key) {
         const parsedPayload = JSON.parse(data.character.message.payload);
         return parsedPayload[key] || null;
     } catch (error) {
-        logger.error({ error }, 'ошибка при парсинге payload');
+        logger.error({ error }, 'error parsing payload');
         return null;
     }
 }
