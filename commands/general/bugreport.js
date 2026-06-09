@@ -31,6 +31,6 @@ module.exports = async (context) => {
             random_id: crypto.randomInt(1, 2_000_000_000),
         });
     } catch (error) {
-        await context.send(references.errors.default);
+        await context.send(responses.errors.default);
     }
 };

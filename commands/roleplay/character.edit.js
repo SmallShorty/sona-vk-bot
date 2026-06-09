@@ -48,17 +48,23 @@ module.exports = async function editCharacter(context, args) {
         case "значок":
             updateData.icon = content;
             break;
-        case "фандом":
+        case "фандом": {
             const fandomRecord = await Fandom.findOne({
                 attributes: ['id'],
                 where: { name: content, chat_id: context.peerId }
             });
             if (!fandomRecord) {
-                return context.send(responses.errors.not_found_fandom);
+                return context.send(responses.errors.not_found);
             }
             updateData.fandom_id = fandomRecord.id;
             break;
+        }
         default:
             return context.send(responses.errors.invalid_input);
     }
+
+    if (!characterId) {
+        return context.send(responses.errors.not_found);
+    }
+    await Character.updateCharacter(characterId, updateData);
 };

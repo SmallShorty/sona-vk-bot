@@ -20,7 +20,6 @@ vk.updates.on('message_new', sessionManager.middleware);
 vk.updates.on('message_new', sceneManager.middleware);
 vk.updates.on(['message_new'], hearManager.middleware);
 vk.updates.on('message_new', sceneManager.middlewareIntercept);
-vk.updates.use(questionManager.middleware);
 
 const eventsPath = path.join(__dirname, 'events');
 fs.readdirSync(eventsPath).forEach((file) => {

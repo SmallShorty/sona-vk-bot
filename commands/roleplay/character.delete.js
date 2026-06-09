@@ -8,7 +8,7 @@ module.exports = async function deleteCharacter(context, args) {
     const userId = args.id || context.senderId;
     const characters = await Character.getCharactersByUser(context.peerId, userId);
     if (characters.length === 0 || !characters) {
-        return await responses.errors.not_found;
+        return context.send(responses.errors.not_found);
     }
     const characterButtons = characters.map(character => ({
         label: character.dataValues.nickname,
@@ -23,11 +23,11 @@ module.exports = async function deleteCharacter(context, args) {
     ]
     const characterData = await askFields(context, fields);
     if (!characterData) {
-        return responses.errors.default;
+        return context.send(responses.errors.default);
     }
     const characterId = parsePayload(characterData, 'id');
     if (!characterId) {
-        throw Error
+        throw new Error('Не удалось определить персонажа');
     }
     return await Character.deleteCharacter(characterId);
 }

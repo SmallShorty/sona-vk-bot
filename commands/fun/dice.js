@@ -1,5 +1,4 @@
 require('../../utils/stringExtensions');
-const vk = require('../..');
 const { getUserInfo } = require('../../utils/getUserInfo');
 
 const getRoll = (range, advantage = null) => {

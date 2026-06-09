@@ -8,7 +8,7 @@ module.exports = async (context) => {
   let response = '';
 
   if (!(await validateEnvironment(context, { requireChat: true }))) return;
-  if (args.id && args.command && !(await validateEnvironment(context, { requireAdmin: true }))) return;
+  if (args.length > 0 && !(await validateEnvironment(context, { requireAdmin: true }))) return;
 
   if (args.length === 0) {
     const fandoms = await Fandom.getFandomList(chat_id);

@@ -11,43 +11,41 @@ module.exports = async (context) => {
     const targetUserId = context.senderId;
 
     if (!(await validateEnvironment(context, { requireAdmin: true }))) return;
-    if (!invalidEnv) { response = invalidEnv } else {
-        switch (command) {
-            case null:
-                try {
-                    response = await Chat.getPinnedMessage(chatId) || responses.errors.not_found;
-                    console.log(response);
-                } catch (err) {
-                    console.log(`ERR] ${err}`)
-                    response = responses.errors.db;
-                }
-                break;
-            case 'добавить':
-            case 'изменить':
-                const newPinnedMessage = await context.question(
-                    responses.requests.enter + 'текст для закреплённого сообщения',
-                    { targetUserId }
-                );
-                try {
-                    await Chat.updatePinnedMessage(chatId, newPinnedMessage.text);
-                    response = responses.success.updated;
-                } catch (err) {
-                    console.log(`ERR] ${err}`);
-                    response = responses.errors.db;
-                }
 
-                break;
-            case 'удалить':
-                try {
-                    await Chat.deletePinnedMessage(chatId)
-                    response = responses.success.deleted;
-                } catch (err) {
-                    console.log(`ERR] ${err}`)
-                    response = responses.errors.db;
-                }
-                break
+    switch (command) {
+        case null:
+            try {
+                response = await Chat.getPinnedMessage(chatId) || responses.errors.not_found;
+            } catch (err) {
+                console.error(`[ERR] ${err}`);
+                response = responses.errors.db;
+            }
+            break;
+        case 'добавить':
+        case 'изменить': {
+            const newPinnedMessage = await context.question(
+                responses.requests.enter + 'текст для закреплённого сообщения',
+                { target_id: targetUserId }
+            );
+            try {
+                await Chat.updatePinnedMessage(chatId, newPinnedMessage.text);
+                response = responses.success.updated;
+            } catch (err) {
+                console.error(`[ERR] ${err}`);
+                response = responses.errors.db;
+            }
+            break;
         }
-    };
+        case 'удалить':
+            try {
+                await Chat.deletePinnedMessage(chatId);
+                response = responses.success.deleted;
+            } catch (err) {
+                console.error(`[ERR] ${err}`);
+                response = responses.errors.db;
+            }
+            break;
+    }
     try {
         await context.send(response);
     } catch (err) {
