@@ -8,7 +8,7 @@ module.exports = async (context) => {
         const uptimeSeconds = Math.floor(uptime % 60);
 
         await context.send(`✅ Бот в сети!\n⏱ Время работы: ${uptimeHours} ч ${uptimeMinutes} мин ${uptimeSeconds} сек.`);
-    } catch (error) {
+    } catch (_error) {
         await context.send(responses.errors.default)
     }
 };

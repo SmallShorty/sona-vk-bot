@@ -1,4 +1,5 @@
 const responses = require('../../data/responses.json');
+const logger = require('../../utils/logger');
 
 const answer = [
     "Бесспорно",
@@ -33,7 +34,7 @@ module.exports = async (context) => {
             })
         });
     } catch (err) {
-        console.log(`[ERR] ${err}`)
+        logger.error({ err }, 'ошибка magic8ball')
         await context.send(responses.errors.default)
     }
 };

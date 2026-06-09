@@ -1,4 +1,4 @@
-const { getUserInfo, mentionUser } = require('../../utils/getUserInfo');
+const { mentionUser } = require('../../utils/getUserInfo');
 const vk = require('../../vkClient');
 
 module.exports = async (context) => {

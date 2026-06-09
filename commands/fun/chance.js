@@ -1,4 +1,5 @@
 const responses = require('../../data/responses.json');
+const logger = require('../../utils/logger');
 const messages = [
     {
         range: [0, 0], messages: [
@@ -74,7 +75,7 @@ module.exports = async (context) => {
             })
         });
     } catch (err) {
-        console.error(`[ERR] ${err}`);
+        logger.error({ err }, 'ошибка chance');
         context.send(responses.errors.default);
     }
 };

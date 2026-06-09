@@ -22,7 +22,7 @@ module.exports = async (context) => {
     try {
         const [userInfo] = await getUserInfo(context.senderId);
         response = `@id${userInfo.id} (${userInfo.first_name} ${userInfo.last_name}), `;
-    } catch (error) {
+    } catch (_error) {
         return context.send('Произошла ошибка при обработке вашего запроса. Попробуйте еще раз.');
     }
 

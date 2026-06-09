@@ -13,12 +13,10 @@ function generateKeyboard(buttons, userId, inline = false, oneTime = false) {
     }
 
     const MAX_BUTTONS_PER_ROW = 5;
-    let currentRow = 0;
 
     buttons.forEach(({ label, payload = {}, color = 'primary' }, index) => {
         if (index % MAX_BUTTONS_PER_ROW === 0 && index !== 0) {
             keyboard.row();
-            currentRow++;
         }
 
         const buttonPayload = {

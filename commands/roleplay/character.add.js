@@ -1,4 +1,5 @@
 const responses = require('../../data/responses.json');
+const logger = require('../../utils/logger');
 const Fandom = require('../../db/models/fandom');
 const Character = require('../../db/models/character');
 const generateKeyboard = require('../../utils/generateKeyboard');
@@ -46,7 +47,7 @@ module.exports = async function addCharacter(context, args) {
         const parsedFandom = JSON.parse(fandomPayload);
         fandomId = parsedFandom.id;
       } catch (e) {
-        console.error("[ERR] Ошибка при парсинге JSON:", e);
+        logger.error({ e }, 'ошибка при парсинге payload фандома');
       }
     }
 
@@ -60,7 +61,7 @@ module.exports = async function addCharacter(context, args) {
     });
     
   } catch (error) {
-    console.log('[ERR] при заполнение формы персонажа:', error);
+    logger.error({ error }, 'ошибка при заполнении формы персонажа');
     throw Error;
   }
 };

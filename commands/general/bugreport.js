@@ -31,7 +31,7 @@ module.exports = async (context) => {
             forward_messages: forwardMessages.join(","),
             random_id: crypto.randomInt(1, 2_000_000_000),
         });
-    } catch (error) {
+    } catch (_error) {
         await context.send(responses.errors.default);
     }
 };

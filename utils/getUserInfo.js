@@ -1,4 +1,5 @@
 const vk = require('../vkClient');
+const logger = require('./logger');
 
 /**
  * Функция для получения данных о пользователях через метод users.get
@@ -29,7 +30,7 @@ async function getUserInfo(userIds, fields = [], nameCase = 'nom') {
         });
         return response;
     } catch (error) {
-        console.error('Ошибка при получении данных о пользователях:', error);
+        logger.error({ error }, 'ошибка при получении данных пользователя');
         throw error;
     }
 }
@@ -44,7 +45,7 @@ async function mentionUser(userIds) {
             throw new Error(`Пользователь ${userIds} не найден`);
         }
     } catch (error) {
-        console.error('Ошибка при упоминании пользователя:', error);
+        logger.error({ error }, 'ошибка при упоминании пользователя');
         throw error;
     }
 }

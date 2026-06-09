@@ -1,6 +1,7 @@
 const vk = require('../vkClient');
 const responses = require('../data/responses.json');
 const { VK_PEER_OFFSET } = require('../config');
+const logger = require('./logger');
 
 const validateEnvironment = async (context, { requireChat = false, requireAdmin = false, requireBotAdmin = false } = {}) => {
     if (requireAdmin) requireChat = true;
@@ -34,7 +35,7 @@ const validateEnvironment = async (context, { requireChat = false, requireAdmin 
                 }
             }
         } catch (error) {
-            console.error('[ERR] Ошибка при получении участников беседы:', error);
+            logger.error({ error }, 'ошибка при получении участников беседы');
 
             if (error.code === 917) {
                 await context.send(responses.errors.no_admin_rights);

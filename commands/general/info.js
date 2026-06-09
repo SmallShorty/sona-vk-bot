@@ -1,6 +1,7 @@
 const Chat = require('../../db/models/chat');
-const validateEnvironment = require('../../utils/validateEnvironment')
-const responses = require('../../data/responses.json')
+const validateEnvironment = require('../../utils/validateEnvironment');
+const responses = require('../../data/responses.json');
+const logger = require('../../utils/logger');
 
 module.exports = async (context) => {
     let response;
@@ -17,7 +18,7 @@ module.exports = async (context) => {
             try {
                 response = await Chat.getPinnedMessage(chatId) || responses.errors.not_found;
             } catch (err) {
-                console.error(`[ERR] ${err}`);
+                logger.error({ err }, 'ошибка в команде info');
                 response = responses.errors.db;
             }
             break;
@@ -31,7 +32,7 @@ module.exports = async (context) => {
                 await Chat.updatePinnedMessage(chatId, newPinnedMessage.text);
                 response = responses.success.updated;
             } catch (err) {
-                console.error(`[ERR] ${err}`);
+                logger.error({ err }, 'ошибка в команде info');
                 response = responses.errors.db;
             }
             break;
@@ -41,7 +42,7 @@ module.exports = async (context) => {
                 await Chat.deletePinnedMessage(chatId);
                 response = responses.success.deleted;
             } catch (err) {
-                console.error(`[ERR] ${err}`);
+                logger.error({ err }, 'ошибка в команде info');
                 response = responses.errors.db;
             }
             break;
@@ -49,7 +50,7 @@ module.exports = async (context) => {
     try {
         await context.send(response);
     } catch (err) {
-        console.error(`[ERROR] Ошибка при отправке сообщения\n${err}`);
+        logger.error({ err }, 'ошибка при отправке ответа info');
         await context.send(responses.errors.default);
     }
 };

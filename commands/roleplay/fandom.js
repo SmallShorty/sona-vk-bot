@@ -1,6 +1,7 @@
 const Fandom = require('../../db/models/fandom');
 const responses = require('../../data/responses.json');
-const validateEnvironment = require('../../utils/validateEnvironment')
+const validateEnvironment = require('../../utils/validateEnvironment');
+const logger = require('../../utils/logger');
 
 module.exports = async (context) => {
   const args = context.text.split(/\s+/).slice(1);
@@ -35,7 +36,7 @@ module.exports = async (context) => {
           await Fandom.createFandom(chat_id, fandomName);
           response = responses.success.added;
         } catch (error) {
-          console.error(`[ERROR] Ошибка при добавлении фандома\n${error}`);
+          logger.error({ error }, 'ошибка при добавлении фандома');
           response = error.name === 'AlreadyExistsError'
             ? `${responses.errors.already_exists} Попробуй выбрать другое имя для фандома.`
             : responses.errors.db;
@@ -52,7 +53,7 @@ module.exports = async (context) => {
           await Fandom.updateFandom(chat_id, oldName, newName);
           response = responses.success.updated;
         } catch (error) {
-          console.error(`[ERROR] Ошибка при изменении фандома\n${error}`);
+          logger.error({ error }, 'ошибка при изменении фандома');
           response = error.name === 'NotFoundError'
             ? `${responses.errors.not_found} Фандома с таким именем не существует.`
             : error.name === 'AlreadyExistsError'
@@ -66,7 +67,7 @@ module.exports = async (context) => {
           await Fandom.deleteFandom(chat_id, fandomName);
           response = responses.success.deleted;
         } catch (error) {
-          console.error(`[ERROR] Ошибка при удалении фандома\n${error}`);
+          logger.error({ error }, 'ошибка при удалении фандома');
           response = error.name === 'NotFoundError'
             ? `${responses.errors.not_found} Фандома с таким именем не существует.`
             : responses.errors.db;
@@ -81,7 +82,7 @@ module.exports = async (context) => {
   try {
     await context.send(response);
   } catch (err) {
-    console.error(`[ERROR] Ошибка при отправке сообщения\n${err}`);
+    logger.error({ err }, 'ошибка при отправке сообщения');
     await context.send(responses.errors.default);
   }
 };

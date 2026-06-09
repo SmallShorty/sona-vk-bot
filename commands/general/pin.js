@@ -3,6 +3,7 @@ const Chat = require("../../db/models/chat");
 const Character = require("../../db/models/character");
 const responses = require("../../data/responses.json");
 const generateCharacterList = require("../../utils/generateCharacterList");
+const logger = require("../../utils/logger");
 
 module.exports = async (context) => {
     try {
@@ -25,10 +26,10 @@ module.exports = async (context) => {
                 message_id: sentMessageId
             });
         } catch (error) {
-            console.error(`[ERR] Не удалось закрепить сообщение: ${error}`);
+            logger.error({ error }, 'не удалось закрепить сообщение');
         }
     } catch (error) {
-        console.error(`[ERR] Sending message failed: ${error}`);
+        logger.error({ error }, 'ошибка при отправке закреплённого сообщения');
         await context.send(responses.errors.default);
     }
 };

@@ -2,6 +2,7 @@ const { mentionUser } = require('../../utils/getUserInfo');
 const vk = require('../../vkClient');
 const words_data = require("../../data/nounsAndAdjectives.json");
 const axios = require('axios');
+const logger = require('../../utils/logger');
 
 function getRandomPair(nouns, adjectives) {
     const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
@@ -19,7 +20,7 @@ async function getAdjectiveGenders(adjective) {
         });
         return response.data;
     } catch (error) {
-        console.error('Ошибка при запросе к API (getAdjectiveGenders):', error);
+        logger.error({ error }, 'ошибка при запросе к API getAdjectiveGenders');
     }
 }
 
@@ -34,7 +35,7 @@ async function getNounGender(noun) {
         });
         return response.data
     } catch (error) {
-        console.error('Ошибка при запросе к API (getNounGender):', error);
+        logger.error({ error }, 'ошибка при запросе к API getNounGender');
     }
 }
 
@@ -79,7 +80,7 @@ module.exports = async (context) => {
 
         await context.send(`🔍 ${mention} — ${response}.`);
 
-    } catch (error) {
+    } catch (_error) {
         await context.send('Произошла ошибка при обработке вашего запроса. Попробуйте еще раз.');
     }
 };

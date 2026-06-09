@@ -2,6 +2,7 @@ const vk = require('../../vkClient');
 const { parseMessage } = require('../../utils/parseMessage');
 const { renderDialogue } = require('../../utils/renderDialogue');
 const { mentionUser } = require('../../utils/getUserInfo');
+const logger = require('../../utils/logger');
 
 module.exports = async (context) => {
     if (!context.replyMessage && context.forwards.size === 0) {
@@ -14,7 +15,7 @@ module.exports = async (context) => {
     const mention = await mentionUser(context.senderId);
 
     if (!buffer || !Buffer.isBuffer(buffer)) {
-        console.error('Invalid buffer returned from renderDialogue');
+        logger.error('renderDialogue вернул некорректный buffer');
         await context.send('Произошла ошибка при создании изображения.');
         return;
     }
@@ -35,7 +36,7 @@ module.exports = async (context) => {
             attachment
         });
     } catch (error) {
-        console.error('Ошибка при загрузке или отправке документа:', error);
+        logger.error({ error }, 'ошибка при загрузке или отправке скриншота');
         await context.send('Произошла ошибка при отправке документа.');
     }
 };

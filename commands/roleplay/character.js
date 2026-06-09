@@ -1,6 +1,6 @@
-const Fandom = require('../../db/models/fandom');
 const Character = require('../../db/models/character');
 const responses = require('../../data/responses.json');
+const logger = require('../../utils/logger');
 const validateEnvironment = require('../../utils/validateEnvironment');
 
 const deleteCharacter = require('./character.delete');
@@ -10,7 +10,7 @@ const generateCharacterList = require("../../utils/generateCharacterList");
 
 module.exports = async (context) => {
     const chat_id = context.peerId;
-    const [_, command, ...payloadParts] = context.text.split(/\s+/);
+    const [, command, ...payloadParts] = context.text.split(/\s+/);
     const payload = payloadParts.join(' ') || null;
     const idMatch = context.text.match(/id\s*(\d+)/i);
     const args = {
@@ -54,7 +54,7 @@ module.exports = async (context) => {
         }
 
     } catch (err) {
-        console.error('[ERROR]', err);
+        logger.error({ err }, 'ошибка команды character');
         return context.send(responses.errors.default);
     }
 };

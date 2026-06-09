@@ -11,7 +11,7 @@ module.exports = [
         ignores: ['node_modules/**'],
         rules: {
             'no-console': 'warn',
-            'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+            'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
             'no-undef': 'error',
             'no-var': 'error',
             'prefer-const': 'warn',
