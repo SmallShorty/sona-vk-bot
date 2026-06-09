@@ -2,9 +2,10 @@ const { mentionUser } = require("../../utils/getUserInfo");
 const vk = require("../../vkClient");
 const crypto = require("crypto");
 const responses = require('../../data/responses.json');
+const { BUG_REPORT_PEER_ID } = require('../../config');
 
 module.exports = async (context) => {
-    const peerId = 2000000003;
+    const peerId = BUG_REPORT_PEER_ID;
 
     const report = context.text.includes(" ")
         ? context.text.substring(context.text.indexOf(" ") + 1)

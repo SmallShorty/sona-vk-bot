@@ -1,13 +1,10 @@
 const vk = require('./vkClient');
 const commands_data = require("./commands/index.json");
 const { checkDatabaseConnection } = require('./db/db');
-const responses = require("./data/responses.json");
 const { hearManager, sessionManager, sceneManager, questionManager } = require('./managers');
+const { PREFIX } = require('./config');
 const path = require('path');
 const fs = require('fs');
-const Chat = require('./db/models/chat');
-
-const prefix = '/';
 
 // // Логирование входящих сообщений
 // vk.updates.on('message_new', async (context, next) => {
@@ -36,18 +33,18 @@ Object.entries(commands_data).forEach(([category, data]) => {
     commands.forEach((commandData) => {
         const { name: commandName, wip, aliases } = commandData;
         if (wip) {
-            console.log(`\n[INFO] Команда ${prefix}${commandName} из категории ${categoryName} помечена как WIP и не будет зарегистрирована.`);
+            console.log(`\n[INFO] Команда ${PREFIX}${commandName} из категории ${categoryName} помечена как WIP и не будет зарегистрирована.`);
             return;
         }
         const handler = require(`./commands/${category}/${commandName}.js`);
-        const regexArray = aliases.map(alias => new RegExp(`^${prefix}${alias}(?=\\s|$)`, 'i'));
-        console.log(`\n[INFO] Регистрируем команду: ${prefix}${commandName} из категории ${categoryName}`);
+        const regexArray = aliases.map(alias => new RegExp(`^${PREFIX}${alias}(?=\\s|$)`, 'i'));
+        console.log(`\n[INFO] Регистрируем команду: ${PREFIX}${commandName} из категории ${categoryName}`);
         console.log(`[INFO] Алиасы: ${aliases.join(', ')}`);
         regexArray.forEach((regex, index) => {
-            console.log(`  - [INFO] Зарегистрирован алиас: ${prefix}${aliases[index]}`);
+            console.log(`  - [INFO] Зарегистрирован алиас: ${PREFIX}${aliases[index]}`);
             hearManager.hear(regex, handler);
         });
-        console.log(`[INFO] Команда ${prefix}${commandName} из категории ${categoryName} и её алиасы успешно зарегистрированы.\n`);
+        console.log(`[INFO] Команда ${PREFIX}${commandName} из категории ${categoryName} и её алиасы успешно зарегистрированы.\n`);
     });
 });
 

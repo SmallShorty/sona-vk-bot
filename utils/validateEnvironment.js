@@ -1,5 +1,6 @@
-const vk = require('../vkClient'); // Подключаем VK API
+const vk = require('../vkClient');
 const responses = require('../data/responses.json');
+const { VK_PEER_OFFSET } = require('../config');
 
 const validateEnvironment = async (context, { requireChat = false, requireAdmin = false, requireBotAdmin = false } = {}) => {
     if (requireAdmin) requireChat = true;
@@ -17,7 +18,7 @@ const validateEnvironment = async (context, { requireChat = false, requireAdmin 
             });
 
             if (requireBotAdmin) {
-                const botId = context.peerId - 2000000000; // ID бота в беседе
+                const botId = context.peerId - VK_PEER_OFFSET;
                 const botMember = response.items.find(item => item.member_id === botId);
                 if (!botMember || !botMember.is_admin) {
                     await context.send('У бота нет прав администратора в этой беседе. Пожалуйста, назначьте бота администратором.');

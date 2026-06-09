@@ -1,5 +1,6 @@
 require('../../utils/stringExtensions');
 const { getUserInfo } = require('../../utils/getUserInfo');
+const { DICE_MIN_RANGE, DICE_MAX_RANGE, DICE_DEFAULT_RANGE } = require('../../config');
 
 const getRoll = (range, advantage = null) => {
     const roll1 = Math.floor(Math.random() * range) + 1;
@@ -14,7 +15,7 @@ const getRoll = (range, advantage = null) => {
 
 module.exports = async (context) => {
     const args = context.text.split(/\s+/);
-    let range = 20;
+    let range = DICE_DEFAULT_RANGE;
     let actions = [];
     let response = '';
 
@@ -27,8 +28,8 @@ module.exports = async (context) => {
 
     if (args.length >= 2 && !isNaN(parseInt(args[1], 10))) {
         range = parseInt(args[1], 10);
-        if (range < 2 || range > 100) {
-            return context.send('Неверный диапазон значений. Укажите число от 2 до 100.');
+        if (range < DICE_MIN_RANGE || range > DICE_MAX_RANGE) {
+            return context.send(`Неверный диапазон значений. Укажите число от ${DICE_MIN_RANGE} до ${DICE_MAX_RANGE}.`);
         }
 
         actions = context.text.slice(args[0].length + args[1].length + 2)
