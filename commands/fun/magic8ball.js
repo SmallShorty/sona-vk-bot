@@ -1,5 +1,4 @@
-const responses = require('../../data/responses.json');
-const logger = require('../../utils/logger');
+const wrapCommand = require('../../utils/wrapCommand');
 
 const answer = [
     "Бесспорно",
@@ -24,17 +23,12 @@ const answer = [
     "Весьма сомнительно"
 ];
 
-module.exports = async (context) => {
-    try {
-        context.send( `🎱 Магический шар говорит: ${answer[Math.floor(Math.random() * answer.length)]}`, {
-            forward: JSON.stringify({
-                peer_id: context.peerId,
-                conversation_message_ids: [context.conversationMessageId],
-                is_reply: 1,
-            })
-        });
-    } catch (err) {
-        logger.error({ err }, 'ошибка magic8ball')
-        await context.send(responses.errors.default)
-    }
-};
+module.exports = wrapCommand(async (context) => {
+    await context.send(`🎱 Магический шар говорит: ${answer[Math.floor(Math.random() * answer.length)]}`, {
+        forward: JSON.stringify({
+            peer_id: context.peerId,
+            conversation_message_ids: [context.conversationMessageId],
+            is_reply: 1,
+        })
+    });
+});

@@ -2,8 +2,9 @@ const Fandom = require('../../db/models/fandom');
 const responses = require('../../data/responses.json');
 const validateEnvironment = require('../../utils/validateEnvironment');
 const logger = require('../../utils/logger');
+const wrapCommand = require('../../utils/wrapCommand');
 
-module.exports = async (context) => {
+module.exports = wrapCommand(async (context) => {
   const args = context.text.split(/\s+/).slice(1);
   const chat_id = context.peerId;
   let response = '';
@@ -85,4 +86,4 @@ module.exports = async (context) => {
     logger.error({ err }, 'ошибка при отправке сообщения');
     await context.send(responses.errors.default);
   }
-};
+});

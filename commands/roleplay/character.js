@@ -1,14 +1,14 @@
 const Character = require('../../db/models/character');
 const responses = require('../../data/responses.json');
-const logger = require('../../utils/logger');
 const validateEnvironment = require('../../utils/validateEnvironment');
+const wrapCommand = require('../../utils/wrapCommand');
 
 const deleteCharacter = require('./character.delete');
 const addCharacter = require('./character.add');
 const editCharacter = require('./character.edit');
 const generateCharacterList = require("../../utils/generateCharacterList");
 
-module.exports = async (context) => {
+module.exports = wrapCommand(async (context) => {
     const chat_id = context.peerId;
     const [, command, ...payloadParts] = context.text.split(/\s+/);
     const payload = payloadParts.join(' ') || null;
@@ -23,38 +23,32 @@ module.exports = async (context) => {
     if (!(await validateEnvironment(context, { requireChat: true }))) return;
     if (args.id && args.command && !(await validateEnvironment(context, { requireAdmin: true }))) return;
 
-    try {
-        if (args.all) {
-            const characters = args.id
-                ? await Character.getCharactersByUser(chat_id, args.id)
-                : await Character.getAllCharactersInChat(chat_id);
+    if (args.all) {
+        const characters = args.id
+            ? await Character.getCharactersByUser(chat_id, args.id)
+            : await Character.getAllCharactersInChat(chat_id);
 
-            if (!characters.length) return context.send(responses.errors.not_found);
+        if (!characters.length) return context.send(responses.errors.not_found);
 
-            return context.send(await generateCharacterList(characters));
-        }
-
-        const actions = {
-            'добавить': async () => {
-                await addCharacter(context, args);
-                return responses.success.added;
-            },
-            'изменить': async () => {
-                await editCharacter(context, args);
-                return responses.success.updated;
-            },
-            'удалить': async () => {
-                await deleteCharacter(context, args);
-                return responses.success.deleted;
-            }
-        };
-
-        if (args.command in actions) {
-            return context.send(await actions[args.command]());
-        }
-
-    } catch (err) {
-        logger.error({ err }, 'ошибка команды character');
-        return context.send(responses.errors.default);
+        return context.send(await generateCharacterList(characters));
     }
-};
+
+    const actions = {
+        'добавить': async () => {
+            await addCharacter(context, args);
+            return responses.success.added;
+        },
+        'изменить': async () => {
+            await editCharacter(context, args);
+            return responses.success.updated;
+        },
+        'удалить': async () => {
+            await deleteCharacter(context, args);
+            return responses.success.deleted;
+        }
+    };
+
+    if (args.command in actions) {
+        return context.send(await actions[args.command]());
+    }
+});

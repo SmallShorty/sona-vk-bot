@@ -1,5 +1,4 @@
-const responses = require('../../data/responses.json');
-const logger = require('../../utils/logger');
+const wrapCommand = require('../../utils/wrapCommand');
 const messages = [
     {
         range: [0, 0], messages: [
@@ -57,25 +56,20 @@ const messages = [
 ];
 
 
-module.exports = async (context) => {
-    try {
-        const chance = Math.floor(Math.random() * 101);
+module.exports = wrapCommand(async (context) => {
+    const chance = Math.floor(Math.random() * 101);
 
-        const group = messages.find(({ range }) => chance >= range[0] && chance <= range[1]);
+    const group = messages.find(({ range }) => chance >= range[0] && chance <= range[1]);
 
-        const randomMessage = group.messages[Math.floor(Math.random() * group.messages.length)];
+    const randomMessage = group.messages[Math.floor(Math.random() * group.messages.length)];
 
-        const response = `🔮 Шанс: ${chance}%\n${randomMessage}`;
+    const response = `🔮 Шанс: ${chance}%\n${randomMessage}`;
 
-        context.send(response, {
-            forward: JSON.stringify({
-                peer_id: context.peerId,
-                conversation_message_ids: [context.conversationMessageId],
-                is_reply: 1,
-            })
-        });
-    } catch (err) {
-        logger.error({ err }, 'ошибка chance');
-        context.send(responses.errors.default);
-    }
-};
+    await context.send(response, {
+        forward: JSON.stringify({
+            peer_id: context.peerId,
+            conversation_message_ids: [context.conversationMessageId],
+            is_reply: 1,
+        })
+    });
+});
