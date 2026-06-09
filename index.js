@@ -41,6 +41,8 @@ Object.entries(commands_data).forEach(([category, data]) => {
     });
 });
 
+require('./db/associations');
+
 checkDatabaseConnection().then(() => {
     vk.updates.start().catch((err) => logger.error({ err }, 'ошибка запуска polling'));
     logger.info('бот запущен');

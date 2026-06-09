@@ -1,34 +1,14 @@
 const { Model, DataTypes } = require('sequelize');
-const { sequelize } = require('../db'); // Импортируем sequelize
-const Chat = require('../models/chat')
+const { sequelize } = require('../db');
 
 class Fandom extends Model {
-  /**
-   * Получает список фандомов для заданного чата.
-   * @param {number} chatId - Идентификатор чата.
-   * @returns {Promise<Array<Fandom>>} Массив фандомов.
-   */
   static async getFandomList(chatId) {
     return await Fandom.findAll({ where: { chat_id: chatId } });
   }
 
-  /**
-   * Создает новый фандом, если фандом с таким именем (без учета регистра) еще не существует.
-   * @param {number} chatId - Идентификатор чата.
-   * @param {string} name - Имя фандома.
-   * @returns {Promise<Fandom>} Созданный фандом.
-   * @throws {Error} Если фандом уже существует, выбрасывается ошибка с именем "AlreadyExistsError".
-   */
   static async createFandom(chatId, name) {
     const normalizedName = name.toLowerCase();
 
-    // Проверяем, существует ли чат
-    const chat = await Chat.findByPk(chatId);
-    if (!chat) {
-      throw new Error(`Чат с ID ${chatId} не найден.`);
-    }
-
-    // Проверяем, существует ли фандом с таким именем
     const existing = await Fandom.findOne({
       where: {
         chat_id: chatId,
