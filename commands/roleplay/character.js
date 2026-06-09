@@ -1,12 +1,12 @@
-const Character = require('../../db/models/character');
-const responses = require('../../data/responses.json');
-const validateEnvironment = require('../../utils/validateEnvironment');
-const wrapCommand = require('../../utils/wrapCommand');
+const Character = require('db/models/character');
+const responses = require('data/responses.json');
+const validateEnvironment = require('utils/validateEnvironment');
+const wrapCommand = require('utils/wrapCommand');
 
 const deleteCharacter = require('./character.delete');
 const addCharacter = require('./character.add');
 const editCharacter = require('./character.edit');
-const generateCharacterList = require("../../utils/generateCharacterList");
+const generateCharacterList = require("utils/generateCharacterList");
 
 module.exports = wrapCommand(async (context) => {
     const chat_id = context.peerId;

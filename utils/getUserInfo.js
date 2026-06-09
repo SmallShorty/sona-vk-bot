@@ -1,5 +1,5 @@
-const vk = require('../vkClient');
-const logger = require('./logger');
+const vk = require('vkClient');
+const logger = require('utils/logger');
 
 /**
  * Функция для получения данных о пользователях через метод users.get

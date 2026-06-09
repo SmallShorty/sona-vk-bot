@@ -1,8 +1,8 @@
-const { mentionUser } = require("../../utils/getUserInfo");
-const vk = require("../../vkClient");
+const { mentionUser } = require("utils/getUserInfo");
+const vk = require("vkClient");
 const crypto = require("crypto");
-const responses = require('../../data/responses.json');
-const { BUG_REPORT_PEER_ID } = require('../../config');
+const responses = require('data/responses.json');
+const { BUG_REPORT_PEER_ID } = require('config');
 
 module.exports = async (context) => {
     const peerId = BUG_REPORT_PEER_ID;

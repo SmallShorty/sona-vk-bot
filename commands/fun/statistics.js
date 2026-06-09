@@ -1,5 +1,5 @@
-const { mentionUser } = require('../../utils/getUserInfo');
-const vk = require('../../vkClient');
+const { mentionUser } = require('utils/getUserInfo');
+const vk = require('vkClient');
 
 module.exports = async (context) => {
     const period = Math.floor(Date.now() / 1000) - 7 * 24 * 60 * 60;

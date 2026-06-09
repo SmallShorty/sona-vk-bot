@@ -1,9 +1,9 @@
-const Fandom = require('../../db/models/fandom');
-const Character = require('../../db/models/character');
-const responses = require('../../data/responses.json');
-const generateKeyboard = require('../../utils/generateKeyboard');
-const askFields = require('../../utils/askFields');
-const parsePayload = require('../../utils/parsePayload');
+const Fandom = require('db/models/fandom');
+const Character = require('db/models/character');
+const responses = require('data/responses.json');
+const generateKeyboard = require('utils/generateKeyboard');
+const askFields = require('utils/askFields');
+const parsePayload = require('utils/parsePayload');
 
 module.exports = async function editCharacter(context, args) {
     const [target, ...contentParts] = args.payload.trim().split(/\s+/);

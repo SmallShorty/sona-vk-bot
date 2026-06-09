@@ -1,4 +1,4 @@
-const wrapCommand = require('../../utils/wrapCommand');
+const wrapCommand = require('utils/wrapCommand');
 const messages = [
     {
         range: [0, 0], messages: [

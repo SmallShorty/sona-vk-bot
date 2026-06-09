@@ -1,7 +1,7 @@
-const vk = require('../vkClient');
-const responses = require('../data/responses.json');
-const { VK_PEER_OFFSET } = require('../config');
-const logger = require('./logger');
+const vk = require('vkClient');
+const responses = require('data/responses.json');
+const { VK_PEER_OFFSET } = require('config');
+const logger = require('utils/logger');
 
 const validateEnvironment = async (context, { requireChat = false, requireAdmin = false, requireBotAdmin = false } = {}) => {
     if (requireAdmin) requireChat = true;

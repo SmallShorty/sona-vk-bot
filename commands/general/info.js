@@ -1,7 +1,7 @@
-const Chat = require('../../db/models/chat');
-const validateEnvironment = require('../../utils/validateEnvironment');
-const responses = require('../../data/responses.json');
-const logger = require('../../utils/logger');
+const Chat = require('db/models/chat');
+const validateEnvironment = require('utils/validateEnvironment');
+const responses = require('data/responses.json');
+const logger = require('utils/logger');
 
 module.exports = async (context) => {
     let response;

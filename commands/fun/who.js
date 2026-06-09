@@ -1,8 +1,8 @@
-const { mentionUser } = require('../../utils/getUserInfo');
-const vk = require('../../vkClient');
-const words_data = require("../../data/nounsAndAdjectives.json");
+const { mentionUser } = require('utils/getUserInfo');
+const vk = require('vkClient');
+const words_data = require("data/nounsAndAdjectives.json");
 const axios = require('axios');
-const logger = require('../../utils/logger');
+const logger = require('utils/logger');
 
 function getRandomPair(nouns, adjectives) {
     const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];

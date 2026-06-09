@@ -1,10 +1,10 @@
-const vk = require("../../vkClient");
-const Chat = require("../../db/models/chat");
-const Character = require("../../db/models/character");
-const responses = require("../../data/responses.json");
-const generateCharacterList = require("../../utils/generateCharacterList");
-const logger = require("../../utils/logger");
-const wrapCommand = require("../../utils/wrapCommand");
+const vk = require("vkClient");
+const Chat = require("db/models/chat");
+const Character = require("db/models/character");
+const responses = require("data/responses.json");
+const generateCharacterList = require("utils/generateCharacterList");
+const logger = require("utils/logger");
+const wrapCommand = require("utils/wrapCommand");
 
 module.exports = wrapCommand(async (context) => {
     let pinnedMessage = await Chat.getPinnedMessage(context.peerId) || responses.errors.not_found;

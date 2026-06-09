@@ -1,4 +1,4 @@
-const wrapCommand = require('../../utils/wrapCommand');
+const wrapCommand = require('utils/wrapCommand');
 
 module.exports = wrapCommand(async (context) => {
     const uptime = process.uptime();

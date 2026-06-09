@@ -1,6 +1,6 @@
-require('../../utils/stringExtensions');
-const { getUserInfo } = require('../../utils/getUserInfo');
-const { DICE_MIN_RANGE, DICE_MAX_RANGE, DICE_DEFAULT_RANGE } = require('../../config');
+require('utils/stringExtensions');
+const { getUserInfo } = require('utils/getUserInfo');
+const { DICE_MIN_RANGE, DICE_MAX_RANGE, DICE_DEFAULT_RANGE } = require('config');
 
 const getRoll = (range, advantage = null) => {
     const roll1 = Math.floor(Math.random() * range) + 1;

@@ -1,8 +1,8 @@
-const Fandom = require('../../db/models/fandom');
-const responses = require('../../data/responses.json');
-const validateEnvironment = require('../../utils/validateEnvironment');
-const logger = require('../../utils/logger');
-const wrapCommand = require('../../utils/wrapCommand');
+const Fandom = require('db/models/fandom');
+const responses = require('data/responses.json');
+const validateEnvironment = require('utils/validateEnvironment');
+const logger = require('utils/logger');
+const wrapCommand = require('utils/wrapCommand');
 
 module.exports = wrapCommand(async (context) => {
   const args = context.text.split(/\s+/).slice(1);

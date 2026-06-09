@@ -1,6 +1,6 @@
 'use strict';
-const logger = require('./logger');
-const responses = require('../data/responses.json');
+const logger = require('utils/logger');
+const responses = require('data/responses.json');
 
 /**
  * Оборачивает обработчик команды в стандартный try/catch.

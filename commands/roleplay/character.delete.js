@@ -1,8 +1,8 @@
-const responses = require('../../data/responses.json');
-const Character = require('../../db/models/character');
-const parsePayload = require('../../utils/parsePayload');
-const generateKeyboard = require('../../utils/generateKeyboard');
-const askFields = require('../../utils/askFields');
+const responses = require('data/responses.json');
+const Character = require('db/models/character');
+const parsePayload = require('utils/parsePayload');
+const generateKeyboard = require('utils/generateKeyboard');
+const askFields = require('utils/askFields');
 
 module.exports = async function deleteCharacter(context, args) {
     const userId = args.id || context.senderId;

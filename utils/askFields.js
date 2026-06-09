@@ -1,4 +1,4 @@
-const logger = require('./logger');
+const logger = require('utils/logger');
 
 async function askFields(context, fields) {
     const responses = {};

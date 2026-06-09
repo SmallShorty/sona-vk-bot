@@ -1,10 +1,10 @@
-require('./config/env'); // проверяет обязательные переменные окружения при запуске
-const vk = require('./vkClient');
-const commands_data = require("./commands/index.json");
-const { checkDatabaseConnection } = require('./db/db');
-const { hearManager, sessionManager, sceneManager, questionManager } = require('./managers');
-const { PREFIX } = require('./config');
-const logger = require('./utils/logger');
+require('config/env'); // проверяет обязательные переменные окружения при запуске
+const vk = require('vkClient');
+const commands_data = require("commands/index.json");
+const { checkDatabaseConnection } = require('db/db');
+const { hearManager, sessionManager, sceneManager, questionManager } = require('managers');
+const { PREFIX } = require('config');
+const logger = require('utils/logger');
 const path = require('path');
 const fs = require('fs');
 
@@ -32,7 +32,7 @@ Object.entries(commands_data).forEach(([category, data]) => {
             logger.debug({ command: commandName, category: categoryName }, 'команда помечена как WIP, пропускаем');
             return;
         }
-        const handler = require(`./commands/${category}/${commandName}.js`);
+        const handler = require(`commands/${category}/${commandName}.js`);
         const regexArray = aliases.map(alias => new RegExp(`^${PREFIX}${alias}(?=\\s|$)`, 'i'));
         regexArray.forEach((regex) => {
             hearManager.hear(regex, handler);
@@ -41,7 +41,7 @@ Object.entries(commands_data).forEach(([category, data]) => {
     });
 });
 
-require('./db/associations');
+require('db/associations');
 
 checkDatabaseConnection().then(() => {
     vk.updates.start().catch((err) => logger.error({ err }, 'ошибка запуска polling'));

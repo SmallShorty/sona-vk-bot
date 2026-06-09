@@ -1,5 +1,5 @@
-const Fandom = require('../db/models/fandom');
-const { mentionUser } = require('./getUserInfo');
+const Fandom = require('db/models/fandom');
+const { mentionUser } = require('utils/getUserInfo');
 
 async function generateCharacterList(characters) {
     const fandomIds = [...new Set(characters.map(c => c.dataValues.fandom_id).filter(Boolean))];

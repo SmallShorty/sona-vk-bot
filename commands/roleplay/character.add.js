@@ -1,10 +1,10 @@
-const responses = require('../../data/responses.json');
-const logger = require('../../utils/logger');
-const Fandom = require('../../db/models/fandom');
-const Character = require('../../db/models/character');
-const generateKeyboard = require('../../utils/generateKeyboard');
-const askFields = require('../../utils/askFields');
-const isEmoji = require('../../utils/isEmoji');
+const responses = require('data/responses.json');
+const logger = require('utils/logger');
+const Fandom = require('db/models/fandom');
+const Character = require('db/models/character');
+const generateKeyboard = require('utils/generateKeyboard');
+const askFields = require('utils/askFields');
+const isEmoji = require('utils/isEmoji');
 
 module.exports = async function addCharacter(context, args) {
   const chat_id = context.peerId;

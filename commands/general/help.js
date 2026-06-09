@@ -1,5 +1,5 @@
-const commands_data = require("../index.json");
-const responses = require('../../data/responses.json');
+const commands_data = require("commands/index.json");
+const responses = require('data/responses.json');
 
 function getCommandByAlias(alias) {
     for (const category in commands_data) {

@@ -1,6 +1,6 @@
-const Chat      = require('./models/chat');
-const Fandom    = require('./models/fandom');
-const Character = require('./models/character');
+const Chat      = require('db/models/chat');
+const Fandom    = require('db/models/fandom');
+const Character = require('db/models/character');
 
 Chat.hasMany(Fandom,    { foreignKey: 'chat_id', onDelete: 'CASCADE' });
 Chat.hasMany(Character, { foreignKey: 'chat_id', onDelete: 'CASCADE' });
